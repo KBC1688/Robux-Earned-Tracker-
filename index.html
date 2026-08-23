@@ -15,7 +15,7 @@
   :root{
     --bg:#0d1117; --panel:#161b22; --panel-2:#1c2330; --line:#2a3240;
     --text:#e6edf3; --muted:#8b98a8; --accent:#00b06f; --accent-2:#3fd68f;
-    --warn:#e5534b; --gold:#f2c14e;
+    --usd:#f2c14e; --usd-2:#ffd97a; --warn:#e5534b;
     --radius:16px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -24,7 +24,7 @@
   body{
     background:var(--bg); color:var(--text);
     font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-    padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 90px);
+    padding:calc(env(safe-area-inset-top) + 12px) 14px calc(env(safe-area-inset-bottom) + 40px);
     max-width:640px; margin:0 auto;
     -webkit-text-size-adjust:100%;
   }
@@ -34,17 +34,39 @@
   .logo{width:36px;height:36px;border-radius:10px;background:linear-gradient(140deg,var(--accent),#0b7a4d);
         display:grid;place-items:center;font-weight:800;font-size:18px;color:#04140d;flex:none}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px}
-  .total{font-size:44px;font-weight:800;line-height:1.05;letter-spacing:-1px;font-variant-numeric:tabular-nums}
-  .total small{font-size:20px;color:var(--muted);font-weight:600}
-  .usd{color:var(--accent-2);font-size:14px;margin-top:4px;font-weight:600}
-  .bar{height:10px;background:var(--panel-2);border-radius:99px;overflow:hidden;margin:12px 0 6px}
-  .bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0;
-           border-radius:99px;transition:width .35s ease}
-  .goalrow{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+
+  /* --- progress rings --- */
+  .rings{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .ring{text-align:center}
+  .ring svg{width:100%;max-width:150px;height:auto;display:block;margin:0 auto}
+  .ring .track{fill:none;stroke:var(--panel-2);stroke-width:11}
+  .ring .arc{fill:none;stroke-width:11;stroke-linecap:round;
+             transform:rotate(-90deg);transform-origin:60px 60px;
+             transition:stroke-dasharray .5s cubic-bezier(.4,0,.2,1)}
+  .ring.robux .arc{stroke:url(#gradR)}
+  .ring.usd .arc{stroke:url(#gradU)}
+  .ring .val{font-size:23px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums;fill:var(--text)}
+  .ring .pct{font-size:11px;font-weight:600;font-variant-numeric:tabular-nums}
+  .ring.robux .pct{fill:var(--accent-2)}
+  .ring.usd .pct{fill:var(--usd-2)}
+  .ring h3{font-size:12px;margin:8px 0 2px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:600}
+  .ring .of{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+
+  /* --- tax breakdown --- */
+  .tax{display:grid;gap:1px;background:var(--line);border-radius:12px;overflow:hidden}
+  .tax div{background:var(--panel);display:flex;justify-content:space-between;align-items:baseline;padding:11px 13px;gap:10px}
+  .tax div b{font-variant-numeric:tabular-nums;font-size:16px;white-space:nowrap}
+  .tax div span{font-size:13px;color:var(--muted)}
+  .tax .t-tax b{color:var(--warn)}
+  .tax .t-net{background:var(--panel-2)}
+  .tax .t-net b{color:var(--usd-2);font-size:18px}
+  .tax .t-net span{color:var(--text);font-weight:600}
+
   .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
   .stat{background:var(--panel-2);border-radius:12px;padding:10px 12px}
   .stat b{display:block;font-size:20px;font-variant-numeric:tabular-nums}
   .stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+
   label{display:block;font-size:12px;color:var(--muted);margin:10px 0 5px;text-transform:uppercase;letter-spacing:.6px}
   input,select,textarea,button{font-family:inherit;font-size:16px}
   input,select,textarea{
@@ -52,6 +74,7 @@
     border-radius:12px;padding:12px 13px;outline:none
   }
   input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+  input:focus-visible,button:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px}
   .chips{display:flex;flex-wrap:wrap;gap:8px}
   .chip{background:var(--panel-2);border:1px solid var(--line);color:var(--muted);
         border-radius:99px;padding:9px 13px;font-size:13px;cursor:pointer}
@@ -79,13 +102,21 @@
   details summary::-webkit-details-marker{display:none}
   details summary::after{content:" ▾"}
   details[open] summary::after{content:" ▴"}
+  details[open] summary{margin-bottom:4px}
+  ol{margin:8px 0 0;padding-left:20px;font-size:13px;color:var(--muted)}
+  ol li{margin-bottom:5px}
   .toast{
     position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 22px);transform:translateX(-50%);
     background:var(--panel-2);border:1px solid var(--line);color:var(--text);padding:11px 18px;border-radius:99px;
-    font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.5)
+    font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20;box-shadow:0 6px 20px rgba(0,0,0,.5);
+    max-width:calc(100% - 32px);text-align:center
   }
   .toast.show{opacity:1}
   .hint{font-size:11px;color:var(--muted);margin-top:6px}
+  .note{font-size:12px;color:var(--muted);line-height:1.5}
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;animation:none !important}
+  }
 </style>
 </head>
 <body>
@@ -94,18 +125,55 @@
   <div class="logo">R$</div>
   <div>
     <h1>Robux Earned Tracker</h1>
-    <div class="sub" id="deviceNote">Saved on this device only</div>
+    <div class="sub">Saved on this device only</div>
   </div>
 </header>
 
 <section class="card">
-  <div class="total"><span id="total">0</span> <small>R$</small></div>
-  <div class="usd" id="usd">≈ $0.00 USD at DevEx rate</div>
-  <div class="bar"><i id="goalBar"></i></div>
-  <div class="goalrow">
-    <span id="goalText">No goal set</span>
-    <span id="goalPct"></span>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="gradR" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#00b06f"/><stop offset="100%" stop-color="#3fd68f"/>
+      </linearGradient>
+      <linearGradient id="gradU" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#d99e2b"/><stop offset="100%" stop-color="#ffd97a"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <div class="rings">
+    <div class="ring robux">
+      <svg viewBox="0 0 120 120" role="img" id="ringRobuxSvg" aria-label="Robux progress">
+        <circle class="track" cx="60" cy="60" r="52"></circle>
+        <circle class="arc" id="arcRobux" cx="60" cy="60" r="52" stroke-dasharray="0 326.73"></circle>
+        <text class="val" x="60" y="58" text-anchor="middle" id="ringRobuxVal">0</text>
+        <text class="pct" x="60" y="76" text-anchor="middle" id="ringRobuxPct">0%</text>
+      </svg>
+      <h3>Robux earned</h3>
+      <div class="of" id="ringRobuxOf">of 1.5B</div>
+    </div>
+
+    <div class="ring usd">
+      <svg viewBox="0 0 120 120" role="img" id="ringUsdSvg" aria-label="USD after tax progress">
+        <circle class="track" cx="60" cy="60" r="52"></circle>
+        <circle class="arc" id="arcUsd" cx="60" cy="60" r="52" stroke-dasharray="0 326.73"></circle>
+        <text class="val" x="60" y="58" text-anchor="middle" id="ringUsdVal">$0</text>
+        <text class="pct" x="60" y="76" text-anchor="middle" id="ringUsdPct">0%</text>
+      </svg>
+      <h3>USD converted</h3>
+      <div class="of" id="ringUsdOf">of $3.5M after tax</div>
+    </div>
   </div>
+</section>
+
+<section class="card">
+  <div class="head"><h2>USD after tax</h2></div>
+  <div class="tax">
+    <div class="t-gross"><span>Converted at DevEx rate</span><b id="usdGross">$0.00</b></div>
+    <div class="t-tax"><span>Tax amount (<b id="taxPctLabel" style="font-size:inherit;font-weight:600">35</b>%)</span><b id="usdTax">−$0.00</b></div>
+    <div class="t-net"><span>Take-home toward goal</span><b id="usdNet">$0.00</b></div>
+  </div>
+  <div class="hint">The USD ring tracks take-home only. Tax rate and DevEx rate are in Settings.</div>
 </section>
 
 <section class="stats card">
@@ -121,12 +189,8 @@
   <input id="amount" type="number" inputmode="numeric" step="1" placeholder="e.g. 250">
   <label>Source</label>
   <div class="chips" id="chips"></div>
-  <div class="row">
-    <div>
-      <label for="date">Date</label>
-      <input id="date" type="date">
-    </div>
-  </div>
+  <label for="date">Date</label>
+  <input id="date" type="date">
   <label for="note">Note (optional)</label>
   <input id="note" type="text" placeholder="e.g. VIP gamepass sale">
   <button class="btn" id="add">Add earning</button>
@@ -134,21 +198,43 @@
 </section>
 
 <section class="card">
+  <div class="head"><h2>Import from Roblox</h2></div>
+  <p class="note">
+    Roblox won't let any outside app read your balance directly — that needs your account
+    login cookie, which you should never hand to anything. Instead, export your transactions
+    from Roblox and load the file here. Repeat imports only add what's new.
+  </p>
+  <ol>
+    <li>On roblox.com, open <b>Settings → Transactions</b> (or Creator Dashboard → Transactions).</li>
+    <li>Pick your date range and tap <b>Export</b> — Roblox emails or downloads a CSV.</li>
+    <li>Come back here and tap the button below, then pick that file.</li>
+  </ol>
+  <button class="btn ghost" id="robloxBtn">Import Roblox CSV</button>
+  <input id="robloxFile" type="file" accept=".csv,text/csv" style="display:none">
+  <div class="hint" id="lastImport"></div>
+</section>
+
+<section class="card">
   <div class="head">
     <h2>History</h2>
-    <a id="clearAll">Clear all</a>
+    <a id="clearAll" role="button" tabindex="0">Clear all</a>
   </div>
   <div id="list"><div class="empty">Nothing logged yet. Add your first earning above.</div></div>
+  <button class="btn ghost" id="showMore" style="display:none">Show all entries</button>
 </section>
 
 <section class="card">
   <details>
     <summary>Settings, backup &amp; export</summary>
-    <label for="goal">Goal (R$)</label>
-    <input id="goal" type="number" inputmode="numeric" step="1" placeholder="e.g. 10000">
+    <label for="goalRobux">Robux goal</label>
+    <input id="goalRobux" type="number" inputmode="numeric" step="1" placeholder="1500000000">
+    <label for="goalUsd">USD goal (take-home, after tax)</label>
+    <input id="goalUsd" type="number" inputmode="decimal" step="1" placeholder="3500000">
     <label for="rate">DevEx rate (USD per R$)</label>
-    <input id="rate" type="number" step="0.0001" placeholder="0.0035">
-    <div class="hint">Roblox's DevEx rate is $0.0035 per Robux (=$350 per 100,000). Change it if the rate changes.</div>
+    <input id="rate" type="number" inputmode="decimal" step="0.0001" placeholder="0.0035">
+    <label for="tax">Tax rate (%)</label>
+    <input id="tax" type="number" inputmode="decimal" step="0.1" placeholder="35">
+    <div class="hint">Roblox's DevEx rate is $0.0035 per Robux ($350 per 100,000).</div>
     <button class="btn ghost" id="saveSettings">Save settings</button>
     <div class="row" style="margin-top:12px">
       <button class="btn ghost" id="expCsv" style="margin-top:0">Export CSV</button>
@@ -159,7 +245,7 @@
   </details>
 </section>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (function(){
@@ -167,20 +253,41 @@
 
   var KEY = "robuxTracker.v1";
   var SOURCES = ["Game Pass","Dev Product","Group Payout","Premium Payout","UGC / Avatar item","Affiliate","Gift","Other"];
-  var DEFAULT_RATE = 0.0035;
+  var DEFAULTS = { rate: 0.0035, tax: 35, goalRobux: 1500000000, goalUsd: 3500000 };
+  var CIRC = 2 * Math.PI * 52;          // circumference of the progress rings
+  var idSeed = 0;                        // keeps ids unique within the same millisecond
+  var PAGE = 25;                         // history rows shown before "show all"
 
   var state = load();
   var picked = state.lastSource || SOURCES[0];
+  var showAll = false;
 
   function load(){
+    var p = null;
     try{
       var raw = localStorage.getItem(KEY);
-      if(raw){
-        var p = JSON.parse(raw);
-        if(p && Array.isArray(p.entries)) return p;
-      }
+      if(raw) p = JSON.parse(raw);
     }catch(e){}
-    return { entries:[], goal:0, rate:DEFAULT_RATE, lastSource:SOURCES[0] };
+    if(!p || !Array.isArray(p.entries)){
+      return { entries:[], goalRobux:DEFAULTS.goalRobux, goalUsd:DEFAULTS.goalUsd,
+               rate:DEFAULTS.rate, tax:DEFAULTS.tax, lastSource:SOURCES[0], lastImport:"" };
+    }
+    return {
+      entries: p.entries,
+      goalRobux: num(p.goalRobux, DEFAULTS.goalRobux),
+      goalUsd: num(p.goalUsd, DEFAULTS.goalUsd) || DEFAULTS.goalUsd,
+      rate: num(p.rate, DEFAULTS.rate) || DEFAULTS.rate,
+      tax: (typeof p.tax === "number" && p.tax >= 0 && p.tax < 100) ? p.tax : DEFAULTS.tax,
+      lastSource: p.lastSource || SOURCES[0],
+      lastImport: p.lastImport || ""
+    };
+  }
+
+  function uid(){ return Date.now() * 1000 + (idSeed++ % 1000); }
+
+  function num(v, fallback){
+    var n = parseFloat(v);
+    return (isFinite(n) && n > 0) ? n : fallback;
   }
 
   function save(){
@@ -193,11 +300,43 @@
 
   function $(id){ return document.getElementById(id); }
   function fmt(n){ return Math.round(n).toLocaleString("en-US"); }
+  function pad(n){ return (n<10?"0":"") + n; }
   function todayISO(){
     var d = new Date();
     return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
   }
-  function pad(n){ return (n<10?"0":"") + n; }
+
+  // 1,500,000,000 -> "1.5B" so it fits inside a ring
+  function fmtShort(n){
+    var abs = Math.abs(n);
+    if(abs >= 1e9) return trim(n/1e9) + "B";
+    if(abs >= 1e6) return trim(n/1e6) + "M";
+    if(abs >= 1e5) return trim(n/1e3) + "K";
+    return fmt(n);
+  }
+  function trim(n){
+    var s = n >= 100 ? n.toFixed(0) : n >= 10 ? n.toFixed(1) : n.toFixed(2);
+    return s.replace(/\.0+$/, "").replace(/(\.\d*[1-9])0+$/, "$1");
+  }
+  function money(n){
+    return "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+  function moneyShort(n){
+    var abs = Math.abs(n);
+    if(abs >= 1e6) return "$" + trim(n/1e6) + "M";
+    if(abs >= 1e5) return "$" + trim(n/1e3) + "K";
+    if(abs >= 1000) return "$" + fmt(n);
+    return "$" + n.toFixed(2);
+  }
+  // Tiny fractions of a billion still deserve an honest number
+  function fmtPct(p){
+    if(p <= 0) return "0%";
+    if(p >= 100) return "100%";
+    if(p >= 10) return p.toFixed(0) + "%";
+    if(p >= 1) return p.toFixed(1) + "%";
+    if(p >= 0.01) return p.toFixed(2) + "%";
+    return "<0.01%";
+  }
 
   var toastTimer;
   function toast(msg){
@@ -205,10 +344,10 @@
     t.textContent = msg;
     t.classList.add("show");
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 3200);
   }
 
-  // ---- chips -------------------------------------------------------------
+  // ---- source chips ------------------------------------------------------
   function renderChips(){
     var wrap = $("chips");
     wrap.innerHTML = "";
@@ -218,29 +357,39 @@
       b.className = "chip";
       b.textContent = s;
       b.setAttribute("aria-pressed", s === picked ? "true" : "false");
-      b.addEventListener("click", function(){
-        picked = s;
-        renderChips();
-      });
+      b.addEventListener("click", function(){ picked = s; renderChips(); });
       wrap.appendChild(b);
     });
   }
 
-  // ---- stats -------------------------------------------------------------
+  // ---- dates -------------------------------------------------------------
   function startOfWeek(){
     var d = new Date(); d.setHours(0,0,0,0);
-    d.setDate(d.getDate() - d.getDay()); // Sunday start
+    d.setDate(d.getDate() - d.getDay());
     return d;
   }
   function startOfMonth(){
     var d = new Date(); d.setHours(0,0,0,0); d.setDate(1);
     return d;
   }
-  function dateOf(e){
-    var parts = e.date.split("-");
-    return new Date(+parts[0], +parts[1]-1, +parts[2]);
+  function dateOf(iso){
+    var p = iso.split("-");
+    return new Date(+p[0], +p[1]-1, +p[2]);
   }
 
+  // ---- rings -------------------------------------------------------------
+  function setRing(arcId, valId, pctId, svgId, value, goal, label, shortFn){
+    var pct = goal > 0 ? (value / goal) * 100 : 0;
+    var capped = Math.max(0, Math.min(100, pct));
+    // a hair of arc so a real-but-tiny amount still shows a mark
+    var len = capped > 0 ? Math.max(CIRC * capped / 100, 3) : 0;
+    $(arcId).setAttribute("stroke-dasharray", len.toFixed(2) + " " + CIRC.toFixed(2));
+    $(valId).textContent = shortFn(value);
+    $(pctId).textContent = pct >= 100 ? "Goal reached" : fmtPct(pct);
+    $(svgId).setAttribute("aria-label", label + ": " + shortFn(value) + " of " + shortFn(goal) + ", " + fmtPct(pct));
+  }
+
+  // ---- render ------------------------------------------------------------
   function render(){
     var entries = state.entries.slice().sort(function(a,b){
       if(a.date === b.date) return b.id - a.id;
@@ -251,52 +400,53 @@
     var sw = startOfWeek(), sm = startOfMonth();
     entries.forEach(function(e){
       total += e.amount;
-      var d = dateOf(e);
+      var d = dateOf(e.date);
       if(d >= sw) wk += e.amount;
       if(d >= sm) mo += e.amount;
       byDay[e.date] = (byDay[e.date] || 0) + e.amount;
     });
 
-    var days = Object.keys(byDay);
+    var days = Object.keys(byDay).sort();
     var best = 0;
     days.forEach(function(k){ if(byDay[k] > best) best = byDay[k]; });
 
     var avg = 0;
     if(days.length){
-      days.sort();
-      var span = Math.round((dateOf({date:days[days.length-1]}) - dateOf({date:days[0]})) / 86400000) + 1;
+      var span = Math.round((dateOf(days[days.length-1]) - dateOf(days[0])) / 86400000) + 1;
       avg = total / Math.max(span, 1);
     }
 
-    $("total").textContent = fmt(total);
-    var rate = state.rate || DEFAULT_RATE;
-    $("usd").textContent = "≈ $" + (total * rate).toFixed(2) + " USD at DevEx rate";
-    $("wk").textContent = fmt(wk);
-    $("mo").textContent = fmt(mo);
-    $("best").textContent = fmt(best);
-    $("avg").textContent = fmt(avg);
+    var gross = total * state.rate;
+    var taxAmt = gross * (state.tax / 100);
+    var net = gross - taxAmt;
 
-    var goal = state.goal || 0;
-    if(goal > 0){
-      var pct = Math.min(100, (total / goal) * 100);
-      $("goalBar").style.width = pct + "%";
-      $("goalText").textContent = fmt(total) + " of " + fmt(goal) + " R$ goal";
-      var shown = Math.round(pct);
-      if(shown >= 100 && pct < 100) shown = 99;   // don't show 100% until it's actually hit
-      $("goalPct").textContent = pct >= 100 ? "Goal reached 🎉" : shown + "%";
-    }else{
-      $("goalBar").style.width = "0%";
-      $("goalText").textContent = "No goal set — add one in Settings";
-      $("goalPct").textContent = "";
-    }
+    setRing("arcRobux","ringRobuxVal","ringRobuxPct","ringRobuxSvg", total, state.goalRobux, "Robux earned", fmtShort);
+    setRing("arcUsd","ringUsdVal","ringUsdPct","ringUsdSvg", net, state.goalUsd, "USD after tax", moneyShort);
+    $("ringRobuxOf").textContent = "of " + fmtShort(state.goalRobux);
+    $("ringUsdOf").textContent = "of " + moneyShort(state.goalUsd) + " after tax";
+
+    $("usdGross").textContent = money(gross);
+    $("usdTax").textContent = "−" + money(taxAmt);
+    $("usdNet").textContent = money(net);
+    $("taxPctLabel").textContent = trim(state.tax);
+
+    $("wk").textContent = fmtShort(wk);
+    $("mo").textContent = fmtShort(mo);
+    $("best").textContent = fmtShort(best);
+    $("avg").textContent = fmtShort(avg);
+
+    $("lastImport").textContent = state.lastImport ? "Last Roblox import: " + state.lastImport : "";
 
     var list = $("list");
     list.innerHTML = "";
     if(!entries.length){
       list.innerHTML = '<div class="empty">Nothing logged yet. Add your first earning above.</div>';
+      $("showMore").style.display = "none";
       return;
     }
-    entries.forEach(function(e){
+
+    var shown = showAll ? entries : entries.slice(0, PAGE);
+    shown.forEach(function(e){
       var row = document.createElement("div");
       row.className = "entry";
 
@@ -329,14 +479,23 @@
       row.appendChild(del);
       list.appendChild(row);
     });
+
+    if(entries.length > PAGE && !showAll){
+      $("showMore").style.display = "block";
+      $("showMore").textContent = "Show all " + fmt(entries.length) + " entries";
+    }else{
+      $("showMore").style.display = "none";
+    }
   }
 
-  // ---- actions -----------------------------------------------------------
+  $("showMore").addEventListener("click", function(){ showAll = true; render(); });
+
+  // ---- add / clear -------------------------------------------------------
   $("add").addEventListener("click", function(){
     var amount = parseInt($("amount").value, 10);
     if(!amount || amount <= 0){ toast("Enter a Robux amount first"); $("amount").focus(); return; }
     state.entries.push({
-      id: Date.now(),
+      id: uid(),
       amount: amount,
       source: picked,
       date: $("date").value || todayISO(),
@@ -351,21 +510,185 @@
     toast("Added +" + fmt(amount) + " R$");
   });
 
-  $("clearAll").addEventListener("click", function(){
+  function clearAll(){
     if(!state.entries.length){ toast("Nothing to clear"); return; }
-    if(!confirm("Delete all " + state.entries.length + " entries? Back up first if you want to keep them.")) return;
+    if(!confirm("Delete all " + fmt(state.entries.length) + " entries? Back up first if you want to keep them.")) return;
     state.entries = [];
+    state.lastImport = "";
     save(); render(); toast("History cleared");
+  }
+  $("clearAll").addEventListener("click", clearAll);
+  $("clearAll").addEventListener("keydown", function(e){
+    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); clearAll(); }
   });
 
+  // ---- settings ----------------------------------------------------------
   $("saveSettings").addEventListener("click", function(){
-    state.goal = parseInt($("goal").value, 10) || 0;
-    var r = parseFloat($("rate").value);
-    state.rate = (r > 0) ? r : DEFAULT_RATE;
-    $("rate").value = state.rate;
-    save(); render(); toast("Settings saved");
+    state.goalRobux = num($("goalRobux").value, DEFAULTS.goalRobux);
+    state.goalUsd   = num($("goalUsd").value, DEFAULTS.goalUsd);
+    state.rate      = num($("rate").value, DEFAULTS.rate);
+    var t = parseFloat($("tax").value);
+    state.tax = (isFinite(t) && t >= 0 && t < 100) ? t : DEFAULTS.tax;
+    save(); fillSettings(); render(); toast("Settings saved");
   });
 
+  function fillSettings(){
+    $("goalRobux").value = state.goalRobux;
+    $("goalUsd").value = state.goalUsd;
+    $("rate").value = state.rate;
+    $("tax").value = state.tax;
+  }
+
+  // ---- Roblox CSV import -------------------------------------------------
+  // Roblox has no API an outside page can read, but it does export a
+  // transaction statement. Column names differ between the account and
+  // creator exports, so match them by meaning rather than position.
+  function parseCSV(text){
+    var rows = [], row = [], cur = "", quoted = false;
+    for(var i = 0; i < text.length; i++){
+      var c = text.charAt(i);
+      if(quoted){
+        if(c === '"'){
+          if(text.charAt(i+1) === '"'){ cur += '"'; i++; }
+          else quoted = false;
+        }else cur += c;
+      }else{
+        if(c === '"') quoted = true;
+        else if(c === ","){ row.push(cur); cur = ""; }
+        else if(c === "\n"){ row.push(cur); rows.push(row); row = []; cur = ""; }
+        else if(c !== "\r") cur += c;
+      }
+    }
+    if(cur.length || row.length){ row.push(cur); rows.push(row); }
+    return rows.filter(function(r){
+      return r.some(function(c){ return c.trim() !== ""; });
+    });
+  }
+
+  function findHeader(rows){
+    for(var i = 0; i < Math.min(rows.length, 10); i++){
+      var cells = rows[i].map(function(c){ return c.trim().toLowerCase(); });
+      var hasDate = cells.some(function(c){ return /date|time/.test(c); });
+      var hasAmt  = cells.some(function(c){ return /amount|robux|price|earn|value/.test(c); });
+      if(hasDate && hasAmt) return i;
+    }
+    return -1;
+  }
+
+  function pickCol(cells, patterns){
+    for(var p = 0; p < patterns.length; p++){
+      for(var i = 0; i < cells.length; i++){
+        if(patterns[p].test(cells[i])) return i;
+      }
+    }
+    return -1;
+  }
+
+  function parseAmount(raw){
+    var s = String(raw).trim();
+    if(!s) return NaN;
+    var neg = /^\(.*\)$/.test(s) || s.indexOf("-") === 0 || s.indexOf("−") === 0;
+    var digits = s.replace(/[^0-9.]/g, "");
+    if(!digits) return NaN;
+    var n = parseFloat(digits);
+    if(!isFinite(n)) return NaN;
+    return neg ? -n : n;
+  }
+
+  function parseDate(raw){
+    var s = String(raw).trim();
+    if(!s) return todayISO();
+    var iso = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso) return iso[1] + "-" + iso[2] + "-" + iso[3];
+    var us = s.match(/^(\d{1,2})[\/.](\d{1,2})[\/.](\d{4})/);
+    if(us) return us[3] + "-" + pad(+us[1]) + "-" + pad(+us[2]);
+    var d = new Date(s);
+    if(!isNaN(d.getTime())) return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+    return todayISO();
+  }
+
+  function mapSource(type, desc){
+    var s = ((type || "") + " " + (desc || "")).toLowerCase();
+    if(/game ?pass/.test(s)) return "Game Pass";
+    if(/developer ?product|dev ?product/.test(s)) return "Dev Product";
+    if(/premium|engagement/.test(s)) return "Premium Payout";   // "Premium Payouts" also matches /payout/
+    if(/group ?payout|payout/.test(s)) return "Group Payout";
+    if(/commission|affiliate|referral/.test(s)) return "Affiliate";
+    if(/ugc|avatar|accessory|clothing|shirt|pants|bundle|asset|sale of goods|item/.test(s)) return "UGC / Avatar item";
+    if(/gift|bonus/.test(s)) return "Gift";
+    return "Other";
+  }
+
+  function importRoblox(text){
+    var rows = parseCSV(text);
+    var h = findHeader(rows);
+    if(h === -1){
+      toast("That file doesn't look like a Roblox transaction export");
+      return;
+    }
+    var header = rows[h].map(function(c){ return c.trim().toLowerCase(); });
+    var iDate = pickCol(header, [/^date$/, /transaction date/, /created/, /date|time/]);
+    var iAmt  = pickCol(header, [/currency amount/, /robux/, /^amount$/, /amount/, /price|value|earn/]);
+    var iType = pickCol(header, [/transaction type/, /^type$/, /event|category/]);
+    var iDesc = pickCol(header, [/item name/, /description/, /detail/, /^name$/, /product/]);
+
+    if(iAmt === -1){ toast("Couldn't find an amount column in that file"); return; }
+
+    var seen = {};
+    state.entries.forEach(function(e){ if(e.k) seen[e.k] = true; });
+
+    var added = 0, dupes = 0, spends = 0, skipped = 0;
+    for(var r = h + 1; r < rows.length; r++){
+      var cells = rows[r];
+      var amount = parseAmount(cells[iAmt]);
+      if(!isFinite(amount) || amount === 0){ skipped++; continue; }
+      if(amount < 0){ spends++; continue; }
+
+      var date = iDate === -1 ? todayISO() : parseDate(cells[iDate]);
+      var type = iType === -1 ? "" : String(cells[iType] || "").trim();
+      var desc = iDesc === -1 ? "" : String(cells[iDesc] || "").trim();
+      var key = date + "|" + amount + "|" + type + "|" + desc;
+
+      if(seen[key]){ dupes++; continue; }
+      seen[key] = true;
+
+      state.entries.push({
+        id: uid(),
+        amount: Math.round(amount),
+        source: mapSource(type, desc),
+        date: date,
+        note: (desc || type || "Roblox import").slice(0, 80),
+        k: key
+      });
+      added++;
+    }
+
+    var parts = [];
+    parts.push(added ? "Imported " + fmt(added) + " earning" + (added === 1 ? "" : "s") : "No new earnings found");
+    if(dupes)  parts.push(fmt(dupes) + " already logged");
+    if(spends) parts.push(fmt(spends) + " spend" + (spends === 1 ? "" : "s") + " skipped");
+    if(skipped) parts.push(fmt(skipped) + " row" + (skipped === 1 ? "" : "s") + " skipped");
+
+    state.lastImport = todayISO() + " · " + fmt(added) + " added";
+    save(); render();
+    toast(parts.join(" · "));
+  }
+
+  $("robloxBtn").addEventListener("click", function(){ $("robloxFile").click(); });
+  $("robloxFile").addEventListener("change", function(ev){
+    var file = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{ importRoblox(String(reader.result)); }
+      catch(err){ toast("Couldn't read that file"); }
+    };
+    reader.onerror = function(){ toast("Couldn't read that file"); };
+    reader.readAsText(file);
+  });
+
+  // ---- export / backup ---------------------------------------------------
   // Saves the file. A normal browser gets a direct download; inside a host that
   // brokers saves (the Claude artifact viewer) it goes through the host prompt.
   async function download(name, text, type){
@@ -417,21 +740,24 @@
   });
 
   $("impBtn").addEventListener("click", function(){ $("impFile").click(); });
-
   $("impFile").addEventListener("change", function(ev){
     var file = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
     if(!file) return;
     var reader = new FileReader();
     reader.onload = function(){
       try{
-        var data = JSON.parse(reader.result);
+        var data = JSON.parse(String(reader.result));
         if(!data || !Array.isArray(data.entries)) throw new Error("bad file");
-        if(!confirm("Replace current data with " + data.entries.length + " entries from this backup?")) return;
+        if(!confirm("Replace current data with " + fmt(data.entries.length) + " entries from this backup?")) return;
         state = {
           entries: data.entries,
-          goal: data.goal || 0,
-          rate: data.rate || DEFAULT_RATE,
-          lastSource: data.lastSource || SOURCES[0]
+          goalRobux: num(data.goalRobux, DEFAULTS.goalRobux),
+          goalUsd: num(data.goalUsd, DEFAULTS.goalUsd),
+          rate: num(data.rate, DEFAULTS.rate),
+          tax: (typeof data.tax === "number" && data.tax >= 0 && data.tax < 100) ? data.tax : DEFAULTS.tax,
+          lastSource: data.lastSource || SOURCES[0],
+          lastImport: data.lastImport || ""
         };
         picked = state.lastSource;
         save(); fillSettings(); renderChips(); render();
@@ -441,13 +767,7 @@
       }
     };
     reader.readAsText(file);
-    ev.target.value = "";
   });
-
-  function fillSettings(){
-    $("goal").value = state.goal || "";
-    $("rate").value = state.rate || DEFAULT_RATE;
-  }
 
   // ---- boot --------------------------------------------------------------
   $("date").value = todayISO();
