@@ -1,12 +1,13 @@
 // Offline cache for Robux Earned Tracker.
 // Bump CACHE when files change so phones pick up the new version.
-var CACHE = "robux-tracker-v4";
+var CACHE = "robux-tracker-v5";
 var FILES = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
+  "./icons/icon-maskable-512.png",
   "./icons/avatar.png"
 ];
 
