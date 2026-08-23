@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "updated": "2026-08-23T18:00:00Z",
+  "projects": [
+    { "id": "whimsy-world", "name": "Whimsy World", "emoji": "🎡" },
+    { "id": "cog-cleanup",  "name": "Cog Cleanup",  "emoji": "⚙️" }
+  ],
+  "tasks": [
+    { "id": "t-001", "project": "whimsy-world", "status": "done",
+      "title": "Whimsy World live in production",
+      "note": "Shipped and earning.",
+      "updated": "2026-08-23", "by": "Kylie" },
+
+    { "id": "t-002", "project": "cog-cleanup", "status": "wip",
+      "title": "Finish Cog Cleanup for launch",
+      "note": "Releasing soon.",
+      "updated": "2026-08-23", "by": "Kylie" },
+
+    { "id": "t-003", "project": "cog-cleanup", "status": "todo",
+      "title": "Playtest round timing and difficulty ramp",
+      "note": "Starter task — replace with your real list.",
+      "updated": "2026-08-23", "by": "Claude" },
+
+    { "id": "t-004", "project": "cog-cleanup", "status": "todo",
+      "title": "Write the how-to-play card",
+      "note": "Starter task — replace with your real list.",
+      "updated": "2026-08-23", "by": "Claude" },
+
+    { "id": "t-005", "project": "whimsy-world", "status": "future",
+      "title": "Seasonal event round",
+      "note": "Starter task — replace with your real list.",
+      "updated": "2026-08-23", "by": "Claude" },
+
+    { "id": "t-006", "project": "whimsy-world", "status": "future",
+      "title": "New trolley skin set",
+      "note": "Starter task — replace with your real list.",
+      "updated": "2026-08-23", "by": "Claude" }
+  ]
+}
