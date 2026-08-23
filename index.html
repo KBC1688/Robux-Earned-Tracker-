@@ -1,0 +1,1299 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#150a3d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Robux Tracker">
+<title>Robux Earned Tracker</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap">
+<style>
+  :root{
+    --space:#150a3d; --space-2:#1e0f56;
+    --edge-1:#a78bfa; --edge-2:#6d28d9;
+    --panel-1:#2e1d76; --panel-2:#241660;
+    --tile:#35237f; --sunk:#190e46;
+    --text:#ffffff; --muted:#b5a4ee;
+    --green:#4ade4a; --green-2:#1f9e2f; --green-dk:#136b22;
+    --gold:#ffc93c; --gold-2:#e79b12;
+    --red:#ff6b6b; --blue:#5b9dff; --orange:#ff9f4a; --pink:#f472d0;
+    --display:"Fredoka","Trebuchet MS",system-ui,sans-serif;
+    --body:"Nunito",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html{background:var(--space)}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(120% 70% at 50% -10%, #3d1f9e 0%, transparent 60%),
+      radial-gradient(90% 60% at 100% 100%, #2a1170 0%, transparent 55%),
+      var(--space);
+    background-attachment:fixed;
+    color:var(--text); font-family:var(--body); font-size:16px; line-height:1.45;
+    padding:calc(env(safe-area-inset-top) + 10px) 12px calc(env(safe-area-inset-bottom) + 34px);
+    max-width:620px; margin:0 auto; position:relative;
+    -webkit-text-size-adjust:100%;
+  }
+  /* star field */
+  .stars{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.85;
+    background-image:
+      radial-gradient(1.6px 1.6px at 10% 12%, #fff 40%, transparent 60%),
+      radial-gradient(1.4px 1.4px at 82% 8%,  #fff 40%, transparent 60%),
+      radial-gradient(1.8px 1.8px at 26% 30%, #ffe9a8 40%, transparent 60%),
+      radial-gradient(1.2px 1.2px at 64% 22%, #fff 40%, transparent 60%),
+      radial-gradient(1.5px 1.5px at 92% 38%, #cdb8ff 40%, transparent 60%),
+      radial-gradient(1.3px 1.3px at 6% 52%,  #fff 40%, transparent 60%),
+      radial-gradient(1.7px 1.7px at 44% 64%, #fff 40%, transparent 60%),
+      radial-gradient(1.2px 1.2px at 76% 72%, #ffe9a8 40%, transparent 60%),
+      radial-gradient(1.5px 1.5px at 18% 84%, #cdb8ff 40%, transparent 60%),
+      radial-gradient(1.3px 1.3px at 88% 92%, #fff 40%, transparent 60%);
+    animation:twinkle 4.5s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle{from{opacity:.5}to{opacity:.95}}
+
+  /* chunky bevelled panel, Roblox UI style */
+  .panel{background:linear-gradient(180deg,var(--edge-1),var(--edge-2));
+         padding:3px;border-radius:26px;margin-bottom:14px;
+         box-shadow:0 6px 0 rgba(43,17,102,.9), 0 14px 26px rgba(0,0,0,.45)}
+  .panel > .in{background:linear-gradient(180deg,var(--panel-1),var(--panel-2));
+               border-radius:23px;padding:15px;position:relative;overflow:hidden}
+  /* glossy top sheen */
+  .panel > .in::before{content:"";position:absolute;left:0;right:0;top:0;height:38%;
+        background:linear-gradient(180deg,rgba(255,255,255,.10),transparent);pointer-events:none}
+
+  h1,h2,h3,.ttl{font-family:var(--display);font-weight:600;letter-spacing:.3px}
+  .sticker{text-shadow:0 2px 0 rgba(23,8,63,.75), 0 0 14px rgba(167,139,250,.45)}
+
+  /* ---------- player card ---------- */
+  .player{display:flex;align-items:center;gap:12px}
+  .player .av{width:94px;height:94px;flex:none;position:relative}
+  .player .av img{width:100%;height:100%;object-fit:contain;object-position:bottom;
+        filter:drop-shadow(0 4px 10px rgba(0,0,0,.55));display:block}
+  .player .av .glow{position:absolute;inset:auto 6% 2px 6%;height:10px;border-radius:50%;
+        background:radial-gradient(closest-side,rgba(74,222,74,.55),transparent);z-index:-1}
+  .player .who{flex:1;min-width:0}
+  .player h1{font-size:17.5px;margin:0;line-height:1.15}
+  .player .tag{font-size:12px;color:var(--muted);font-weight:700;margin-top:1px}
+  .lvl{display:flex;align-items:center;gap:7px;margin-top:7px}
+  .lvl .chip{font-family:var(--display);font-size:12px;font-weight:700;color:#0d2b10;
+        background:linear-gradient(180deg,#7ef07e,var(--green-2));border:2px solid #0f7a1c;
+        border-radius:99px;padding:2px 10px;white-space:nowrap;
+        box-shadow:0 2px 0 rgba(0,0,0,.35)}
+  .lvl .rank{font-size:12.5px;font-weight:800;color:var(--gold);min-width:0;
+        overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .xp{height:9px;background:var(--sunk);border:2px solid #4c31b8;border-radius:99px;
+      margin-top:8px;overflow:hidden}
+  .xp > i{display:block;height:100%;border-radius:99px;width:0;
+      background:linear-gradient(90deg,#7ef07e,var(--green));transition:width .5s ease;
+      min-width:10px}
+
+  /* ---------- rings ---------- */
+  .rings{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ring{text-align:center}
+  .ring svg{width:100%;max-width:158px;height:auto;display:block;margin:0 auto;overflow:visible}
+  .ring .track{fill:none;stroke:var(--sunk);stroke-width:14}
+  .ring .rim{fill:none;stroke:rgba(255,255,255,.10);stroke-width:1.5}
+  .ring .arc{fill:none;stroke-width:14;stroke-linecap:round;
+        transform:rotate(-90deg);transform-origin:70px 70px;
+        transition:stroke-dasharray .55s cubic-bezier(.34,1.3,.5,1)}
+  .ring .val{font-family:var(--display);font-size:25px;font-weight:700;fill:#fff}
+  .ring .pct{font-family:var(--body);font-size:12px;font-weight:900}
+  .r-robux .arc{stroke:url(#gR);filter:drop-shadow(0 0 6px rgba(74,222,74,.75))}
+  .r-robux .pct{fill:var(--green)}
+  .r-usd .arc{stroke:url(#gU);filter:drop-shadow(0 0 6px rgba(255,201,60,.75))}
+  .r-usd .pct{fill:var(--gold)}
+  .plate{margin-top:8px;border-radius:14px;padding:7px 6px;
+         background:linear-gradient(180deg,#241660,#1b1049);border:2px solid #5233c9;
+         box-shadow:0 3px 0 rgba(0,0,0,.35)}
+  .plate b{display:block;font-family:var(--display);font-size:12.5px;font-weight:600;
+           letter-spacing:.6px;text-transform:uppercase}
+  .plate span{font-size:11.5px;color:var(--muted);font-weight:700}
+  .r-robux .plate{border-color:#2f9c3a;box-shadow:0 3px 0 #103d16, inset 0 0 18px rgba(74,222,74,.18)}
+  .r-robux .plate b{color:#9cf59c}
+  .r-usd .plate{border-color:#c98a11;box-shadow:0 3px 0 #4d3406, inset 0 0 18px rgba(255,201,60,.18)}
+  .r-usd .plate b{color:#ffdf8a}
+
+  /* ---------- farm ---------- */
+  .farm{border-radius:16px;overflow:hidden;border:2px solid #5233c9;box-shadow:0 3px 0 rgba(0,0,0,.35)}
+  .farm svg{width:100%;height:auto;display:block}
+  .piece{opacity:.07;transition:opacity .7s ease}
+  .piece.on{opacity:1}
+  .piece.fresh{animation:plotPop .9s cubic-bezier(.34,1.5,.5,1)}
+  @keyframes plotPop{0%{opacity:0;transform:translateY(9px) scale(.9)}
+    60%{opacity:1;transform:translateY(-2px) scale(1.04)}100%{opacity:1;transform:none}}
+  .pips{display:flex;gap:5px;margin:11px 0 8px}
+  .pips i{flex:1;height:7px;border-radius:99px;background:var(--sunk);
+          border:1.5px solid #4c31b8;transition:background .4s}
+  .pips i.on{background:linear-gradient(90deg,#7ef07e,var(--green));border-color:#2f9c3a}
+  .farmcap{font-size:12.5px;font-weight:800;color:#d9cdff;text-align:center}
+  .farmcap b{color:var(--gold)}
+
+  /* ---------- game tabs ---------- */
+  .tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 6px;margin-bottom:11px;
+        scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none;background:linear-gradient(180deg,#3d2896,#2c1b70);border:2px solid #5b3fd0;
+       color:#cfc2ff;border-radius:99px;padding:8px 14px;font-family:var(--body);
+       font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.3)}
+  .tab[aria-selected="true"]{background:linear-gradient(180deg,#ffdf8a,var(--gold-2));
+       border-color:#8a5c05;color:#3a2500;box-shadow:0 3px 0 #6b4704}
+  .gsum{display:flex;gap:8px;margin-bottom:11px}
+  .gsum > div{flex:1;background:var(--sunk);border:2px solid #4c31b8;border-radius:14px;
+              padding:8px 10px;min-width:0}
+  .gsum span{display:block;font-size:10.5px;font-weight:900;letter-spacing:.7px;
+             text-transform:uppercase;color:var(--muted);white-space:nowrap;
+             overflow:hidden;text-overflow:ellipsis}
+  .gsum b{display:block;font-family:var(--display);font-size:16px;font-weight:600;
+          font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gsum .g-rbx b{color:#9cf59c}
+  .gsum .g-usd b{color:var(--gold)}
+  .gsum .g-shr b{color:#fff}
+
+  .confetti{position:fixed;top:-16px;width:9px;height:15px;border-radius:2px;z-index:60;
+            pointer-events:none;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(108vh) rotate(760deg);opacity:.15}}
+
+  /* ---------- section heads ---------- */
+  .sec{display:flex;align-items:center;gap:8px;margin:0 0 11px}
+  .sec .ico{font-size:20px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
+  .sec h2{font-size:16px;margin:0;text-transform:uppercase;letter-spacing:.8px}
+
+  /* ---------- money rows ---------- */
+  .rows{border-radius:16px;overflow:hidden;background:var(--sunk);
+        border:2px solid #4c31b8}
+  .rows > div{display:flex;justify-content:space-between;align-items:center;gap:10px;
+        padding:11px 13px;border-bottom:2px solid rgba(76,49,184,.55)}
+  .rows > div:last-child{border-bottom:0}
+  .rows .lb{display:flex;align-items:center;gap:8px;font-size:13px;color:#d9cdff;font-weight:700}
+  .rows b{font-family:var(--display);font-weight:600;font-size:17px;
+          font-variant-numeric:tabular-nums;white-space:nowrap}
+  .r-tax b{color:var(--red)}
+  .r-net{background:linear-gradient(180deg,#4a2fb8,#3a2496)}
+  .r-net .lb{color:#fff;font-weight:800}
+  .r-net b{color:var(--gold);font-size:19px}
+
+  /* ---------- stat tiles ---------- */
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .tile{border-radius:18px;padding:11px 12px;border:2px solid;position:relative;overflow:hidden;
+        box-shadow:0 4px 0 rgba(0,0,0,.35)}
+  .tile .lb{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:900;
+        letter-spacing:.8px;text-transform:uppercase;opacity:.95}
+  .tile b{display:block;font-family:var(--display);font-size:23px;font-weight:700;
+        margin-top:2px;font-variant-numeric:tabular-nums}
+  .t-green {background:linear-gradient(180deg,#1c7a34,#0f4d20);border-color:#41d155}
+  .t-blue  {background:linear-gradient(180deg,#1e5bb8,#123a7c);border-color:#5b9dff}
+  .t-purple{background:linear-gradient(180deg,#6b2fb8,#45197c);border-color:#c084fc}
+  .t-orange{background:linear-gradient(180deg,#b85e18,#7c3c0d);border-color:#ff9f4a}
+
+  /* ---------- form ---------- */
+  label{display:block;font-size:11.5px;color:var(--muted);margin:12px 0 6px;
+        text-transform:uppercase;letter-spacing:.8px;font-weight:900}
+  input,select,button{font-family:var(--body);font-size:16px}
+  input{width:100%;background:var(--sunk);border:2px solid #4c31b8;color:var(--text);
+        border-radius:14px;padding:12px 13px;outline:none;font-weight:700}
+  input::placeholder{color:#7c6bbf}
+  input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(74,222,74,.2)}
+  input:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .bigamt{position:relative}
+  .bigamt input{padding-left:52px;font-family:var(--display);font-size:22px;font-weight:600}
+  .bigamt .pre{position:absolute;left:14px;top:50%;transform:translateY(-50%);
+        font-family:var(--display);font-weight:700;color:var(--green);font-size:18px;pointer-events:none}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{display:flex;align-items:center;gap:5px;background:linear-gradient(180deg,#3d2896,#2c1b70);
+        border:2px solid #5b3fd0;color:#cfc2ff;border-radius:99px;padding:8px 12px;
+        font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.3)}
+  .chip[aria-pressed="true"]{background:linear-gradient(180deg,#7ef07e,var(--green-2));
+        border-color:#0f7a1c;color:#0d2b10;box-shadow:0 3px 0 #0b5416}
+  .btn{width:100%;border:0;border-radius:16px;padding:14px;margin-top:14px;cursor:pointer;
+       font-family:var(--display);font-size:17px;font-weight:600;color:#0d2b10;
+       background:linear-gradient(180deg,#7ef07e,var(--green-2));
+       box-shadow:0 5px 0 var(--green-dk), 0 8px 14px rgba(0,0,0,.35)}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--green-dk)}
+  .btn.gold{color:#3a2500;background:linear-gradient(180deg,#ffdf8a,var(--gold-2));
+       box-shadow:0 5px 0 #8a5c05, 0 8px 14px rgba(0,0,0,.35)}
+  .btn.gold:active{box-shadow:0 2px 0 #8a5c05}
+  .btn.plain{color:#fff;background:linear-gradient(180deg,#5b3fd0,#3f2799);
+       box-shadow:0 5px 0 #2a1870, 0 8px 14px rgba(0,0,0,.35)}
+  .btn.plain:active{box-shadow:0 2px 0 #2a1870}
+  .btn.sm{font-size:14px;padding:11px}
+  .row2{display:flex;gap:10px}
+  .row2 > *{flex:1;min-width:0}
+
+  /* ---------- history ---------- */
+  .entry{display:flex;align-items:center;gap:10px;background:var(--sunk);
+         border:2px solid #4431a8;border-radius:16px;padding:9px 11px;margin-bottom:8px}
+  .entry .em{font-size:20px;flex:none;line-height:1}
+  .entry .meta{flex:1;min-width:0}
+  .entry .meta b{display:block;font-size:13.5px;font-weight:800}
+  .entry .meta span{display:block;font-size:11.5px;color:var(--muted);font-weight:700;
+        overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .entry .amt{font-family:var(--display);font-weight:700;font-size:16px;color:var(--green);
+        white-space:nowrap;font-variant-numeric:tabular-nums}
+  .del{background:none;border:0;color:#8b7bd0;font-size:22px;padding:2px 4px;cursor:pointer;flex:none;line-height:1}
+  .empty{text-align:center;color:var(--muted);font-weight:700;font-size:13.5px;padding:20px 8px}
+  .empty .big{font-size:34px;display:block;margin-bottom:6px}
+
+  details summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px}
+  details summary::-webkit-details-marker{display:none}
+  summary .caret{margin-left:auto;color:var(--muted);font-size:13px}
+  details[open] summary{margin-bottom:6px}
+  .note{font-size:12.5px;color:#cfc2ff;font-weight:700;line-height:1.55}
+  ol{margin:9px 0 0;padding-left:20px;font-size:12.5px;color:var(--muted);font-weight:700}
+  ol li{margin-bottom:5px}
+  .hint{font-size:11.5px;color:var(--muted);margin-top:8px;font-weight:700}
+  .link{color:var(--gold);font-size:12.5px;font-weight:800;cursor:pointer;text-decoration:none}
+
+  .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom) + 20px);
+    transform:translateX(-50%) translateY(8px);
+    background:linear-gradient(180deg,#5b3fd0,#3a2496);border:3px solid #a78bfa;
+    color:#fff;padding:11px 18px;border-radius:99px;font-weight:800;font-size:13.5px;
+    opacity:0;pointer-events:none;transition:opacity .22s, transform .22s;z-index:30;
+    box-shadow:0 8px 0 rgba(0,0,0,.35);max-width:calc(100% - 28px);text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .pop{position:fixed;pointer-events:none;font-size:26px;z-index:40;
+       animation:floatUp 1.1s ease-out forwards}
+  @keyframes floatUp{
+    0%{opacity:0;transform:translate(-50%,0) scale(.5)}
+    25%{opacity:1;transform:translate(-50%,-26px) scale(1.15)}
+    100%{opacity:0;transform:translate(-50%,-92px) scale(.9)}
+  }
+  @keyframes cheer{0%,100%{transform:translateY(0) rotate(0)}
+    30%{transform:translateY(-9px) rotate(-4deg)}65%{transform:translateY(-3px) rotate(3deg)}}
+  .cheer{animation:cheer .7s ease-in-out}
+  @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
+</style>
+</head>
+<body>
+<div class="stars" aria-hidden="true"></div>
+
+<section class="panel">
+  <div class="in player">
+    <div class="av"><span class="glow"></span><img src="icons/avatar.png" alt="Your Roblox avatar"></div>
+    <div class="who">
+      <h1 class="sticker">Robux Earned Tracker</h1>
+      <div class="tag">Saved on this device only</div>
+      <div class="lvl">
+        <span class="chip" id="levelChip">LVL 1</span>
+        <span class="rank" id="rankName">New Dev</span>
+      </div>
+      <div class="xp"><i id="xpBar"></i></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="in">
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+      <linearGradient id="gR" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#8ff58f"/><stop offset="100%" stop-color="#22c55e"/></linearGradient>
+      <linearGradient id="gU" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#ffe9a8"/><stop offset="100%" stop-color="#f0a90f"/></linearGradient>
+    </defs></svg>
+
+    <div class="rings">
+      <div class="ring r-robux">
+        <svg viewBox="0 0 140 140" role="img" id="svgR" aria-label="Robux progress">
+          <circle class="track" cx="70" cy="70" r="56"></circle>
+          <circle class="rim" cx="70" cy="70" r="63.5"></circle>
+          <circle class="arc" id="arcR" cx="70" cy="70" r="56" stroke-dasharray="0 351.86"></circle>
+          <circle id="dotR" cx="70" cy="14" r="5.5" fill="#fff" stroke="#22c55e" stroke-width="2.5"></circle>
+          <text class="val" x="70" y="70" text-anchor="middle" id="valR">0</text>
+          <text class="pct" x="70" y="88" text-anchor="middle" id="pctR">0%</text>
+          <g id="badgeR">
+            <circle cx="70" cy="126" r="15" fill="#1f9e2f" stroke="#8ff58f" stroke-width="3"></circle>
+            <polygon points="70,118 77,122 77,130 70,134 63,130 63,122" fill="#d6ffd6"></polygon>
+            <polygon points="70,122 73.5,124 73.5,128 70,130 66.5,128 66.5,124" fill="#1f9e2f"></polygon>
+          </g>
+        </svg>
+        <div class="plate"><b>Robux earned</b><span id="ofR">of 1.5B</span></div>
+      </div>
+
+      <div class="ring r-usd">
+        <svg viewBox="0 0 140 140" role="img" id="svgU" aria-label="USD after tax progress">
+          <circle class="track" cx="70" cy="70" r="56"></circle>
+          <circle class="rim" cx="70" cy="70" r="63.5"></circle>
+          <circle class="arc" id="arcU" cx="70" cy="70" r="56" stroke-dasharray="0 351.86"></circle>
+          <circle id="dotU" cx="70" cy="14" r="5.5" fill="#fff" stroke="#f0a90f" stroke-width="2.5"></circle>
+          <text class="val" x="70" y="70" text-anchor="middle" id="valU">$0</text>
+          <text class="pct" x="70" y="88" text-anchor="middle" id="pctU">0%</text>
+          <g>
+            <circle cx="70" cy="126" r="15" fill="#e79b12" stroke="#ffe9a8" stroke-width="3"></circle>
+            <text x="70" y="133" text-anchor="middle" font-family="Fredoka,sans-serif"
+                  font-size="19" font-weight="700" fill="#4d3406">$</text>
+          </g>
+        </svg>
+        <div class="plate"><b>USD converted</b><span id="ofU">of $3.5M after tax</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="in">
+    <div class="sec"><span class="ico">🇸🇪</span><h2 class="sticker">The farm in Sweden</h2></div>
+    <div class="farm">
+<svg viewBox="0 0 320 170" role="img" id="farmSvg" aria-label="Farm build progress">
+  <defs>
+    <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#150c46"/><stop offset="62%" stop-color="#39288c"/>
+      <stop offset="100%" stop-color="#7659c8"/></linearGradient>
+    <linearGradient id="grassG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#46ad52"/><stop offset="100%" stop-color="#22762f"/></linearGradient>
+    <linearGradient id="lakeG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8fd6f5"/><stop offset="100%" stop-color="#2f7fb8"/></linearGradient>
+    <linearGradient id="aurG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4ade4a" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#4ade4a" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/></linearGradient>
+    <clipPath id="frame"><rect x="0" y="0" width="320" height="170" rx="15"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#frame)">
+    <rect x="0" y="0" width="320" height="170" fill="url(#skyG)"/>
+    <g fill="#fff" opacity=".7">
+      <circle cx="24" cy="18" r="1.1"/><circle cx="62" cy="34" r="1"/><circle cx="104" cy="14" r="1.3"/>
+      <circle cx="146" cy="30" r="1"/><circle cx="188" cy="16" r="1.2"/><circle cx="228" cy="40" r="1"/>
+      <circle cx="292" cy="52" r="1.1"/><circle cx="256" cy="12" r="1"/><circle cx="12" cy="52" r="1"/>
+    </g>
+    <circle cx="270" cy="30" r="12" fill="#ffe9a8" opacity=".92"/>
+    <circle cx="265" cy="26" r="12" fill="#39288c" opacity=".55"/>
+
+    <!-- 10: aurora sits behind everything on the ground -->
+    <g id="p10a" class="piece">
+      <path d="M-10,44 Q60,10 140,40 Q220,70 330,28 L330,70 Q220,104 140,74 Q60,44 -10,78 Z"
+            fill="url(#aurG)"/>
+      <path d="M-10,26 Q80,-2 170,22 Q250,42 330,12 L330,40 Q250,68 170,48 Q80,26 -10,54 Z"
+            fill="url(#aurG)" opacity=".55"/>
+    </g>
+
+    <!-- 1: the land -->
+    <g id="p1" class="piece">
+      <path d="M0,112 Q52,97 104,110 Q158,123 212,106 Q268,90 320,105 L320,170 L0,170 Z" fill="url(#grassG)"/>
+      <path d="M0,134 Q80,126 160,140 Q240,153 320,141 L320,170 L0,170 Z" fill="#2f9440" opacity=".5"/>
+    </g>
+
+    <!-- 6: pine forest, behind the buildings -->
+    <g id="p6" class="piece" fill="#1d6b37">
+      <polygon points="14,112 26,80 38,112"/><polygon points="34,112 44,88 54,112"/>
+      <polygon points="0,112 10,92 20,112"/>
+      <polygon points="282,108 294,76 306,108"/><polygon points="266,108 276,86 286,108"/>
+      <polygon points="302,108 312,88 320,108"/>
+      <g fill="#0f4d26"><rect x="24.5" y="108" width="3" height="7"/><rect x="292.5" y="104" width="3" height="7"/></g>
+    </g>
+
+    <!-- 3: the red stuga -->
+    <g id="p3" class="piece">
+      <path d="M150,172 Q160,150 143,132 Q126,116 128,124" stroke="#d2a86e" stroke-width="7"
+            fill="none" stroke-linecap="round" opacity=".9"/>
+      <rect x="96" y="104" width="46" height="25" rx="2" fill="#b5342a"/>
+      <polygon points="90,106 119,85 148,106" fill="#f5efe0"/>
+      <polygon points="93,105 119,88 145,105" fill="#7d201a"/>
+      <rect x="130" y="88" width="7" height="11" fill="#8a3b2f"/>
+      <rect x="112" y="114" width="13" height="15" rx="1" fill="#f5efe0"/>
+      <rect x="114" y="116" width="9" height="13" fill="#6d4326"/>
+      <rect x="99" y="109" width="11" height="10" fill="#f5efe0"/>
+      <rect x="101" y="111" width="7" height="6" fill="#ffdc7a"/>
+      <rect x="128" y="109" width="11" height="10" fill="#f5efe0"/>
+      <rect x="130" y="111" width="7" height="6" fill="#ffdc7a"/>
+    </g>
+
+    <!-- 4: the barn -->
+    <g id="p4" class="piece">
+      <polygon points="194,106 202,94 254,94 262,106" fill="#f5efe0"/>
+      <polygon points="197,105 204,96 252,96 259,105" fill="#6f1c16"/>
+      <rect x="198" y="105" width="60" height="26" rx="2" fill="#9c2b22"/>
+      <rect x="217" y="112" width="22" height="19" fill="#f5efe0"/>
+      <path d="M217,112 L239,131 M239,112 L217,131" stroke="#9c2b22" stroke-width="2.4"/>
+      <rect x="203" y="110" width="8" height="7" fill="#ffdc7a"/>
+    </g>
+
+    <!-- 9: the greenhouse -->
+    <g id="p9" class="piece">
+      <polygon points="158,116 172,107 186,116" fill="#cdefff" opacity=".85"/>
+      <rect x="159" y="116" width="26" height="15" rx="1.5" fill="#dff4ff" opacity=".72"/>
+      <path d="M172,107 L172,131 M159,123 L185,123" stroke="#8fd6f5" stroke-width="1.4"/>
+      <rect x="158" y="130" width="28" height="2.5" fill="#6d4326"/>
+      <g fill="#3fa14a"><circle cx="165" cy="127" r="2.2"/><circle cx="172" cy="128" r="2"/><circle cx="180" cy="127" r="2.2"/></g>
+    </g>
+
+    <!-- 8: lake and jetty -->
+    <g id="p8" class="piece">
+      <ellipse cx="44" cy="139" rx="40" ry="12" fill="url(#lakeG)"/>
+      <path d="M14,137 Q28,134 44,137 M30,143 Q46,140 62,143" stroke="#eaf7ff" stroke-width="1.3"
+            fill="none" opacity=".75" stroke-linecap="round"/>
+      <rect x="60" y="136" width="20" height="3.5" rx="1" fill="#8a5a30"/>
+      <rect x="62" y="139" width="2.5" height="6" fill="#6d4326"/>
+      <rect x="75" y="139" width="2.5" height="6" fill="#6d4326"/>
+    </g>
+
+    <!-- 5: crop fields -->
+    <g id="p5" class="piece">
+      <path d="M196,150 L214,133 L268,133 L256,150 Z" fill="#c9a227" opacity=".85"/>
+      <g stroke="#8a6a12" stroke-width="1.3" opacity=".8">
+        <path d="M204,148 L219,136"/><path d="M214,148 L229,136"/><path d="M224,148 L239,136"/>
+        <path d="M234,148 L249,136"/><path d="M244,148 L259,136"/>
+      </g>
+      <g fill="#e6c34a"><circle cx="212" cy="140" r="1.6"/><circle cx="232" cy="143" r="1.6"/><circle cx="252" cy="139" r="1.6"/></g>
+    </g>
+
+    <!-- 7: sheep -->
+    <g id="p7" class="piece">
+      <g><ellipse cx="96" cy="150" rx="8" ry="6" fill="#f6f2ea"/><circle cx="103" cy="147" r="3.4" fill="#3a3a44"/>
+         <rect x="92" y="154" width="2" height="4" fill="#3a3a44"/><rect x="99" y="154" width="2" height="4" fill="#3a3a44"/></g>
+      <g><ellipse cx="120" cy="156" rx="7" ry="5.2" fill="#f6f2ea"/><circle cx="126" cy="153.5" r="3" fill="#3a3a44"/>
+         <rect x="116" y="159" width="1.8" height="3.6" fill="#3a3a44"/><rect x="122" y="159" width="1.8" height="3.6" fill="#3a3a44"/></g>
+      <g><ellipse cx="74" cy="157" rx="6.4" ry="4.8" fill="#f6f2ea"/><circle cx="79" cy="155" r="2.8" fill="#3a3a44"/>
+         <rect x="70" y="160" width="1.7" height="3.4" fill="#3a3a44"/><rect x="76" y="160" width="1.7" height="3.4" fill="#3a3a44"/></g>
+    </g>
+
+    <!-- 2: the fence, front-most -->
+    <g id="p2" class="piece">
+      <g fill="#c58b4e">
+        <rect x="0" y="152" width="320" height="3.6" rx="1.8"/>
+        <rect x="0" y="161" width="320" height="3.6" rx="1.8"/>
+      </g>
+      <g fill="#a97038">
+        <rect x="8" y="147" width="4.5" height="22" rx="1.5"/><rect x="48" y="147" width="4.5" height="22" rx="1.5"/>
+        <rect x="88" y="147" width="4.5" height="22" rx="1.5"/><rect x="128" y="147" width="4.5" height="22" rx="1.5"/>
+        <rect x="168" y="147" width="4.5" height="22" rx="1.5"/><rect x="208" y="147" width="4.5" height="22" rx="1.5"/>
+        <rect x="248" y="147" width="4.5" height="22" rx="1.5"/><rect x="288" y="147" width="4.5" height="22" rx="1.5"/>
+      </g>
+    </g>
+
+    <!-- 10: the flag -->
+    <g id="p10b" class="piece">
+      <rect x="150" y="74" width="2.6" height="78" rx="1.3" fill="#e8e4f5"/>
+      <rect x="152.6" y="76" width="28" height="17" rx="1" fill="#006aa7"/>
+      <rect x="161" y="76" width="5" height="17" fill="#fecc00"/>
+      <rect x="152.6" y="82" width="28" height="5" fill="#fecc00"/>
+      <circle cx="151.3" cy="72" r="2.4" fill="#ffe9a8"/>
+    </g>
+  </g>
+</svg>
+    </div>
+    <div class="pips" id="pips" aria-hidden="true"></div>
+    <div class="farmcap" id="farmCap"></div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="in">
+    <div class="sec"><span class="ico">💵</span><h2 class="sticker">USD after tax</h2></div>
+    <div class="rows">
+      <div><span class="lb"><span>💎</span>Converted at DevEx rate</span><b id="usdGross">$0.00</b></div>
+      <div class="r-tax"><span class="lb"><span>🧾</span><span id="taxLabel">Tax amount (35%)</span></span><b id="usdTax">−$0.00</b></div>
+      <div class="r-net"><span class="lb"><span>🏆</span>Take-home toward goal</span><b id="usdNet">$0.00</b></div>
+    </div>
+    <div class="hint">The gold ring only counts take-home. Rates live in Settings.</div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="in">
+    <div class="sec"><span class="ico">🎮</span><h2 class="sticker">By game</h2></div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <div class="gsum">
+      <div class="g-rbx"><span>Robux</span><b id="gRbx">0</b></div>
+      <div class="g-usd"><span>Take-home</span><b id="gUsd">$0</b></div>
+      <div class="g-shr"><span id="gShrLabel">Entries</span><b id="gShr">0</b></div>
+    </div>
+    <div class="tiles">
+      <div class="tile t-green"><span class="lb"><span>📅</span>This week</span><b id="wk">0</b></div>
+      <div class="tile t-blue"><span class="lb"><span>🗓️</span>This month</span><b id="mo">0</b></div>
+      <div class="tile t-purple"><span class="lb"><span>🏅</span>Best day</span><b id="best">0</b></div>
+      <div class="tile t-orange"><span class="lb"><span>📊</span>Daily average</span><b id="avg">0</b></div>
+    </div>
+    <div class="sec" style="margin:15px 0 10px"><span class="ico">📜</span>
+      <h2 class="sticker">History</h2>
+      <a class="link" id="clearAll" role="button" tabindex="0" style="margin-left:auto">Clear all</a></div>
+    <div id="list"></div>
+    <button class="btn plain sm" id="showMore" style="display:none">Show all entries</button>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="in">
+    <div class="sec"><span class="ico">➕</span><h2 class="sticker">Log an earning</h2></div>
+    <label for="amount">How much?</label>
+    <div class="bigamt">
+      <span class="pre">R$</span>
+      <input id="amount" type="number" inputmode="numeric" step="1" placeholder="250">
+    </div>
+    <label>Which game?</label>
+    <div class="chips" id="gameChips"></div>
+    <label>Where from?</label>
+    <div class="chips" id="chips"></div>
+    <label for="date">When?</label>
+    <input id="date" type="date">
+    <label for="note">Note (optional)</label>
+    <input id="note" type="text" placeholder="VIP gamepass sale">
+    <button class="btn" id="add">Add it! 🎉</button>
+    <div class="hint">Log what actually landed in your account, after Roblox's cut.</div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="in">
+    <div class="sec"><span class="ico">🔄</span><h2 class="sticker">Sync from Roblox</h2></div>
+    <p class="note">
+      Roblox won't let any outside app read your balance — that needs your account
+      login, which you should never hand over. Export your transactions instead and
+      drop the file here. Importing twice only adds what's new.
+    </p>
+    <ol>
+      <li>On roblox.com: <b>Settings → Transactions</b></li>
+      <li>Pick your dates and tap <b>Export</b></li>
+      <li>Come back and load the file below</li>
+    </ol>
+    <label for="importGame">Tag these rows as</label>
+    <input list="gameList" id="importGame" placeholder="Unassigned">
+    <datalist id="gameList"></datalist>
+    <button class="btn gold" id="robloxBtn">Import Roblox CSV 📥</button>
+    <input id="robloxFile" type="file" accept=".csv,text/csv" style="display:none">
+    <div class="hint" id="lastImport"></div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="in">
+    <details>
+      <summary><span class="ico">⚙️</span><h2 class="sticker" style="font-size:16px;margin:0;text-transform:uppercase;letter-spacing:.8px">Settings &amp; backup</h2><span class="caret">▾</span></summary>
+      <label for="gamesList">Your games (one per line)</label>
+      <input id="gamesList" placeholder="Whimsy World">
+      <div class="hint">Comma-separated. Each one gets its own tab.</div>
+      <label for="goalRobux">Robux goal</label>
+      <input id="goalRobux" type="number" inputmode="numeric" step="1" placeholder="1500000000">
+      <label for="goalUsd">USD goal (take-home)</label>
+      <input id="goalUsd" type="number" inputmode="decimal" step="1" placeholder="3500000">
+      <label for="rate">DevEx rate (USD per R$)</label>
+      <input id="rate" type="number" inputmode="decimal" step="0.0001" placeholder="0.0035">
+      <label for="tax">Tax rate (%)</label>
+      <input id="tax" type="number" inputmode="decimal" step="0.1" placeholder="35">
+      <div class="hint">Roblox's DevEx rate is $0.0035 per Robux ($350 per 100,000).</div>
+      <button class="btn plain sm" id="saveSettings">Save settings</button>
+      <div class="row2" style="margin-top:10px">
+        <button class="btn plain sm" id="expCsv" style="margin-top:0">Export CSV</button>
+        <button class="btn plain sm" id="expJson" style="margin-top:0">Backup</button>
+      </div>
+      <button class="btn plain sm" id="impBtn">Restore from backup</button>
+      <input id="impFile" type="file" accept="application/json,.json" style="display:none">
+      <div class="hint" style="text-align:center;margin-top:12px">Build <b id="build">v6</b> · farm &amp; game tabs</div>
+    </details>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var KEY = "robuxTracker.v1";
+  var SOURCES = [
+    ["Game Pass","🎟️"], ["Dev Product","🛒"], ["Group Payout","👥"], ["Premium Payout","👑"],
+    ["UGC / Avatar item","🎩"], ["Affiliate","🤝"], ["Gift","🎁"], ["Other","✨"]
+  ];
+  var EMOJI = {};
+  SOURCES.forEach(function(s){ EMOJI[s[0]] = s[1]; });
+  var NAMES = SOURCES.map(function(s){ return s[0]; });
+
+  var DEFAULTS = { rate:0.0035, tax:35, goalRobux:1500000000, goalUsd:3500000 };
+  var DEFAULT_GAMES = ["Whimsy World","Cog Cleanup"];
+  var UNASSIGNED = "Unassigned";
+
+  // The farm builds one plot per 10% of the USD goal.
+  var FARM = [
+    { ids:["p1"],  name:"The land" },        { ids:["p2"],  name:"The fence" },
+    { ids:["p3"],  name:"The red stuga" },   { ids:["p4"],  name:"The barn" },
+    { ids:["p5"],  name:"The crop fields" }, { ids:["p6"],  name:"The pine forest" },
+    { ids:["p7"],  name:"The sheep" },       { ids:["p8"],  name:"The lake & jetty" },
+    { ids:["p9"],  name:"The greenhouse" },  { ids:["p10a","p10b"], name:"The Swedish flag" }
+  ];
+  var R = 56, CIRC = 2 * Math.PI * R;
+  var PAGE = 25;
+
+  // rank ladder, by share of the Robux goal
+  var RANKS = [
+    [100,"Goal Crusher 👑"], [75,"Platform Legend"], [50,"Robux Baron"], [25,"Front Page"],
+    [10,"Trending Dev"], [2,"Shop Owner"], [0.5,"Rising Creator"], [0,"First Sale"]
+  ];
+
+  var state = load();
+  var picked = state.lastSource || NAMES[0];
+  var pickedGame = state.lastGame || state.games[0] || UNASSIGNED;
+  var activeTab = "All";
+  var showAll = false;
+  var idSeed = 0;
+
+  function load(){
+    var p = null;
+    try{ var raw = localStorage.getItem(KEY); if(raw) p = JSON.parse(raw); }catch(e){}
+    if(!p || !Array.isArray(p.entries)){
+      return { entries:[], goalRobux:DEFAULTS.goalRobux, goalUsd:DEFAULTS.goalUsd,
+               rate:DEFAULTS.rate, tax:DEFAULTS.tax, lastSource:NAMES[0], lastImport:"",
+               games:DEFAULT_GAMES.slice(), lastGame:DEFAULT_GAMES[0], celebrated:0 };
+    }
+    return {
+      entries: p.entries,
+      goalRobux: num(p.goalRobux, DEFAULTS.goalRobux),
+      goalUsd: num(p.goalUsd, DEFAULTS.goalUsd),
+      rate: num(p.rate, DEFAULTS.rate),
+      tax: (typeof p.tax === "number" && p.tax >= 0 && p.tax < 100) ? p.tax : DEFAULTS.tax,
+      lastSource: p.lastSource || NAMES[0],
+      lastImport: p.lastImport || "",
+      games: (Array.isArray(p.games) && p.games.length) ? p.games : DEFAULT_GAMES.slice(),
+      lastGame: typeof p.lastGame === "string" ? p.lastGame : DEFAULT_GAMES[0],
+      // null means "never checked" — adopt the current plot without a party
+      celebrated: (typeof p.celebrated === "number") ? p.celebrated : null
+    };
+  }
+  function uid(){ return Date.now() * 1000 + (idSeed++ % 1000); }
+  function num(v, fallback){ var n = parseFloat(v); return (isFinite(n) && n > 0) ? n : fallback; }
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch(e){ toast("Couldn't save — storage is full or blocked"); }
+  }
+  function $(id){ return document.getElementById(id); }
+  function fmt(n){ return Math.round(n).toLocaleString("en-US"); }
+  function pad(n){ return (n<10?"0":"") + n; }
+  function todayISO(){ var d = new Date();
+    return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+
+  function trim(n){
+    var s = n >= 100 ? n.toFixed(0) : n >= 10 ? n.toFixed(1) : n.toFixed(2);
+    return s.replace(/\.0+$/,"").replace(/(\.\d*[1-9])0+$/,"$1");
+  }
+  function fmtShort(n){
+    var a = Math.abs(n);
+    if(a >= 1e9) return trim(n/1e9) + "B";
+    if(a >= 1e6) return trim(n/1e6) + "M";
+    if(a >= 1e5) return trim(n/1e3) + "K";
+    return fmt(n);
+  }
+  function money(n){
+    var d = Math.abs(n) >= 10000 ? 0 : 2;   // cents only where they still matter
+    return "$" + n.toLocaleString("en-US",{minimumFractionDigits:d, maximumFractionDigits:d});
+  }
+  function moneyShort(n){
+    var a = Math.abs(n);
+    if(a >= 1e6) return "$" + trim(n/1e6) + "M";
+    if(a >= 1e5) return "$" + trim(n/1e3) + "K";
+    if(a >= 1000) return "$" + fmt(n);
+    return "$" + n.toFixed(2);
+  }
+  function fmtPct(p){
+    if(p <= 0) return "0%";
+    if(p >= 100) return "100%";
+    if(p >= 10) return p.toFixed(0) + "%";
+    if(p >= 1) return p.toFixed(1) + "%";
+    if(p >= 0.01) return p.toFixed(2) + "%";
+    return "<0.01%";
+  }
+
+  var toastTimer;
+  function toast(msg){
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 3200);
+  }
+
+  function reducedMotion(){
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
+  function confetti(count){
+    if(reducedMotion()) return;
+    var colors = ["#4ade4a","#ffc93c","#ff6b6b","#5b9dff","#f472d0","#ffffff","#a78bfa"];
+    for(var i = 0; i < count; i++){
+      (function(i){
+        var d = document.createElement("div");
+        d.className = "confetti";
+        d.style.left = (Math.random()*100) + "vw";
+        d.style.background = colors[i % colors.length];
+        d.style.animationDelay = (Math.random()*0.6).toFixed(2) + "s";
+        d.style.animationDuration = (1.9 + Math.random()*1.5).toFixed(2) + "s";
+        if(i % 3 === 0){ d.style.width = "7px"; d.style.height = "7px"; d.style.borderRadius = "50%"; }
+        document.body.appendChild(d);
+        setTimeout(function(){ d.remove(); }, 4200);
+      })(i);
+    }
+  }
+
+  // little coins floating off the button
+  function popCoins(el){
+    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var box = el.getBoundingClientRect();
+    ["🪙","💚","🪙"].forEach(function(ch, i){
+      var s = document.createElement("div");
+      s.className = "pop"; s.textContent = ch;
+      s.style.left = (box.left + box.width * (0.3 + i*0.2)) + "px";
+      s.style.top = (box.top - 6) + "px";
+      s.style.animationDelay = (i*90) + "ms";
+      document.body.appendChild(s);
+      setTimeout(function(){ s.remove(); }, 1400);
+    });
+    var av = document.querySelector(".av img");
+    if(av){ av.classList.remove("cheer"); void av.offsetWidth; av.classList.add("cheer"); }
+  }
+
+  function renderChips(){
+    var wrap = $("chips");
+    wrap.innerHTML = "";
+    SOURCES.forEach(function(s){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip";
+      b.setAttribute("aria-pressed", s[0] === picked ? "true" : "false");
+      var e = document.createElement("span"); e.textContent = s[1];
+      b.appendChild(e);
+      b.appendChild(document.createTextNode(s[0]));
+      b.addEventListener("click", function(){ picked = s[0]; renderChips(); });
+      wrap.appendChild(b);
+    });
+  }
+
+  function startOfWeek(){ var d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-d.getDay()); return d; }
+  function startOfMonth(){ var d = new Date(); d.setHours(0,0,0,0); d.setDate(1); return d; }
+  function dateOf(iso){ var p = iso.split("-"); return new Date(+p[0], +p[1]-1, +p[2]); }
+
+  function setRing(arcId, dotId, valId, pctId, svgId, value, goal, label, shortFn){
+    var pct = goal > 0 ? (value/goal)*100 : 0;
+    var capped = Math.max(0, Math.min(100, pct));
+    var len = capped > 0 ? Math.max(CIRC * capped/100, 3) : 0;
+    $(arcId).setAttribute("stroke-dasharray", len.toFixed(2) + " " + CIRC.toFixed(2));
+    // ride the marker dot around to the end of the arc
+    var ang = (-90 + 360 * capped/100) * Math.PI/180;
+    $(dotId).setAttribute("cx", (70 + R*Math.cos(ang)).toFixed(2));
+    $(dotId).setAttribute("cy", (70 + R*Math.sin(ang)).toFixed(2));
+    $(valId).textContent = shortFn(value);
+    $(pctId).textContent = pct >= 100 ? "MAXED!" : fmtPct(pct);
+    $(svgId).setAttribute("aria-label", label + ": " + shortFn(value) + " of " + shortFn(goal) + ", " + fmtPct(pct));
+  }
+
+  function renderFarm(net){
+    var goal = state.goalUsd;
+    var done = goal > 0 ? Math.min(FARM.length, Math.floor(net/goal*FARM.length)) : 0;
+
+    // first run on an existing save adopts the current plot silently
+    var isNew = state.celebrated !== null && done > state.celebrated;
+    if(state.celebrated !== done){
+      state.celebrated = done;   // follows downward too, so a reset can re-celebrate
+      save();
+    }
+
+    FARM.forEach(function(piece, i){
+      piece.ids.forEach(function(id){
+        var el = $(id);
+        if(!el) return;
+        var on = i < done;
+        el.classList.toggle("on", on);
+        if(on && isNew && i === done-1 && !reducedMotion()){
+          el.classList.remove("fresh"); void el.getBoundingClientRect(); el.classList.add("fresh");
+          setTimeout(function(){ el.classList.remove("fresh"); }, 1000);
+        }
+      });
+    });
+
+    var pips = $("pips");
+    if(pips.childNodes.length !== FARM.length){
+      pips.innerHTML = "";
+      FARM.forEach(function(){ pips.appendChild(document.createElement("i")); });
+    }
+    for(var k = 0; k < FARM.length; k++){
+      pips.childNodes[k].classList.toggle("on", k < done);
+    }
+
+    var cap = $("farmCap");
+    if(done >= FARM.length){
+      cap.innerHTML = "Farm complete — see you in Sweden! 🇸🇪";
+    }else{
+      cap.innerHTML = "Plot <b>" + done + " of " + FARM.length + "</b> · next: " +
+        FARM[done].name + " at <b>" + money(goal*(done+1)/FARM.length) + "</b>";
+    }
+
+    if(isNew){
+      confetti(70);
+      // let the "+X R$" toast land first, then take the stage
+      setTimeout(function(){
+        toast(done >= FARM.length
+          ? "The farm is finished! See you in Sweden 🇸🇪🎉"
+          : FARM[done-1].name + " built! " + done + "/" + FARM.length + " plots 🎉");
+      }, 900);
+    }
+  }
+
+  function rankFor(pct){
+    for(var i = 0; i < RANKS.length; i++){ if(pct >= RANKS[i][0]) return RANKS[i][1]; }
+    return "New Dev";
+  }
+  // Level tracks the Robux goal on a square-root curve: early sales move the bar
+  // quickly, and level 50 lands exactly on the goal.
+  function levelFor(pct){
+    if(pct <= 0) return {lvl:1, frac:0};
+    var raw = 50 * Math.sqrt(Math.min(pct,100)/100);
+    return {lvl: Math.min(50, 1 + Math.floor(raw)), frac: raw - Math.floor(raw)};
+  }
+
+  function tabList(){
+    var tabs = ["All"].concat(state.games);
+    if(state.entries.some(function(e){ return !e.game; })) tabs.push(UNASSIGNED);
+    return tabs;
+  }
+
+  function renderTabs(){
+    var wrap = $("tabs"), tabs = tabList();
+    if(tabs.indexOf(activeTab) === -1) activeTab = "All";
+    wrap.innerHTML = "";
+    tabs.forEach(function(t){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "tab"; b.setAttribute("role","tab");
+      b.setAttribute("aria-selected", t === activeTab ? "true" : "false");
+      b.textContent = t;
+      b.addEventListener("click", function(){ activeTab = t; showAll = false; renderTabs(); render(); });
+      wrap.appendChild(b);
+    });
+
+    var list = $("gameList");
+    list.innerHTML = "";
+    state.games.forEach(function(g){
+      var o = document.createElement("option"); o.value = g; list.appendChild(o);
+    });
+  }
+
+  function renderGameChips(){
+    var wrap = $("gameChips");
+    var opts = state.games.concat([UNASSIGNED]);
+    if(opts.indexOf(pickedGame) === -1) pickedGame = opts[0];
+    wrap.innerHTML = "";
+    opts.forEach(function(g){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip";
+      b.setAttribute("aria-pressed", g === pickedGame ? "true" : "false");
+      b.textContent = g;
+      b.addEventListener("click", function(){ pickedGame = g; renderGameChips(); });
+      wrap.appendChild(b);
+    });
+  }
+
+  function inTab(e){
+    if(activeTab === "All") return true;
+    if(activeTab === UNASSIGNED) return !e.game;
+    return e.game === activeTab;
+  }
+
+  function render(){
+    var entries = state.entries.filter(inTab).sort(function(a,b){
+      if(a.date === b.date) return b.id - a.id;
+      return a.date < b.date ? 1 : -1;
+    });
+
+    var total = 0, wk = 0, mo = 0, byDay = {};
+    var sw = startOfWeek(), sm = startOfMonth();
+    entries.forEach(function(e){
+      total += e.amount;
+      var d = dateOf(e.date);
+      if(d >= sw) wk += e.amount;
+      if(d >= sm) mo += e.amount;
+      byDay[e.date] = (byDay[e.date] || 0) + e.amount;
+    });
+
+    var days = Object.keys(byDay).sort(), best = 0;
+    days.forEach(function(k){ if(byDay[k] > best) best = byDay[k]; });
+    var avg = 0;
+    if(days.length){
+      var span = Math.round((dateOf(days[days.length-1]) - dateOf(days[0]))/86400000) + 1;
+      avg = total / Math.max(span,1);
+    }
+
+    var gross = total * state.rate;
+    var taxAmt = gross * (state.tax/100);
+    var net = gross - taxAmt;
+
+    // the farm tracks the whole journey, never one game's slice
+    var allRobux = 0;
+    state.entries.forEach(function(e){ allRobux += e.amount; });
+    var allNet = allRobux * state.rate * (1 - state.tax/100);
+    renderFarm(allNet);
+
+    $("gRbx").textContent = fmtShort(total);
+    $("gUsd").textContent = moneyShort(net);
+    if(activeTab === "All"){
+      $("gShrLabel").textContent = "Entries";
+      $("gShr").textContent = fmt(entries.length);
+    }else{
+      $("gShrLabel").textContent = "Share";
+      $("gShr").textContent = allRobux > 0 ? fmtPct(total/allRobux*100) : "0%";
+    }
+
+    setRing("arcR","dotR","valR","pctR","svgR", allRobux, state.goalRobux, "Robux earned", fmtShort);
+    setRing("arcU","dotU","valU","pctU","svgU", allNet, state.goalUsd, "USD after tax", moneyShort);
+    $("ofR").textContent = "of " + fmtShort(state.goalRobux);
+    $("ofU").textContent = "of " + moneyShort(state.goalUsd) + " after tax";
+
+    var goalPct = state.goalRobux > 0 ? (allRobux/state.goalRobux)*100 : 0;
+    var lv = levelFor(goalPct);
+    $("levelChip").textContent = "LVL " + lv.lvl;
+    $("xpBar").style.width = (lv.frac*100).toFixed(1) + "%";
+    $("rankName").textContent = allRobux > 0 ? rankFor(goalPct) : "New Dev";
+
+    var allGross = allRobux * state.rate;
+    $("usdGross").textContent = money(allGross);
+    $("usdTax").textContent = "−" + money(allGross * (state.tax/100));
+    $("usdNet").textContent = money(allNet);
+    $("taxLabel").textContent = "Tax amount (" + trim(state.tax) + "%)";
+
+    $("wk").textContent = fmtShort(wk);
+    $("mo").textContent = fmtShort(mo);
+    $("best").textContent = fmtShort(best);
+    $("avg").textContent = fmtShort(avg);
+    $("lastImport").textContent = state.lastImport ? "Last import: " + state.lastImport : "";
+
+    var list = $("list");
+    list.innerHTML = "";
+    if(!entries.length){
+      list.innerHTML = activeTab === "All"
+        ? '<div class="empty"><span class="big">🪙</span>Nothing logged yet — add your first earning!</div>'
+        : '<div class="empty"><span class="big">🔜</span>Nothing from ' + activeTab +
+          ' yet — good luck with the launch!</div>';
+      $("showMore").style.display = "none";
+      return;
+    }
+
+    (showAll ? entries : entries.slice(0, PAGE)).forEach(function(e){
+      var row = document.createElement("div");
+      row.className = "entry";
+
+      var em = document.createElement("div");
+      em.className = "em"; em.textContent = EMOJI[e.source] || "✨";
+
+      var meta = document.createElement("div");
+      meta.className = "meta";
+      var b = document.createElement("b"); b.textContent = e.source;
+      var sp = document.createElement("span");
+      sp.textContent = e.date + (e.game ? " · " + e.game : "") + (e.note ? " · " + e.note : "");
+      meta.appendChild(b); meta.appendChild(sp);
+
+      var amt = document.createElement("div");
+      amt.className = "amt"; amt.textContent = "+" + fmt(e.amount);
+
+      var del = document.createElement("button");
+      del.className = "del"; del.type = "button";
+      del.setAttribute("aria-label", "Delete entry"); del.textContent = "×";
+      del.addEventListener("click", function(){
+        if(!confirm("Delete this entry?")) return;
+        state.entries = state.entries.filter(function(x){ return x.id !== e.id; });
+        save(); render(); toast("Entry deleted");
+      });
+
+      row.appendChild(em); row.appendChild(meta); row.appendChild(amt); row.appendChild(del);
+      list.appendChild(row);
+    });
+
+    if(entries.length > PAGE && !showAll){
+      $("showMore").style.display = "block";
+      $("showMore").textContent = "Show all " + fmt(entries.length) + " entries";
+    }else{
+      $("showMore").style.display = "none";
+    }
+  }
+
+  $("showMore").addEventListener("click", function(){ showAll = true; render(); });
+
+  $("add").addEventListener("click", function(){
+    var amount = parseInt($("amount").value, 10);
+    if(!amount || amount <= 0){ toast("Enter a Robux amount first"); $("amount").focus(); return; }
+    state.entries.push({
+      id: uid(), amount: amount, source: picked,
+      game: pickedGame === UNASSIGNED ? "" : pickedGame,
+      date: $("date").value || todayISO(), note: $("note").value.trim()
+    });
+    state.lastSource = picked;
+    state.lastGame = pickedGame;
+    save();
+    $("amount").value = ""; $("note").value = ""; $("date").value = todayISO();
+    render();
+    popCoins(this);
+    toast("Nice! +" + fmt(amount) + " R$");
+  });
+
+  function clearAll(){
+    if(!state.entries.length){ toast("Nothing to clear"); return; }
+    if(!confirm("Delete all " + fmt(state.entries.length) + " entries? Back up first if you want to keep them.")) return;
+    state.entries = []; state.lastImport = "";
+    save(); render(); toast("History cleared");
+  }
+  $("clearAll").addEventListener("click", clearAll);
+  $("clearAll").addEventListener("keydown", function(e){
+    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); clearAll(); }
+  });
+
+  function parseGames(raw){
+    var out = [];
+    String(raw).split(/[\n,]/).forEach(function(g){
+      g = g.trim();
+      if(g && g.toLowerCase() !== UNASSIGNED.toLowerCase() && out.indexOf(g) === -1) out.push(g);
+    });
+    return out;
+  }
+
+  $("saveSettings").addEventListener("click", function(){
+    state.goalRobux = num($("goalRobux").value, DEFAULTS.goalRobux);
+    state.goalUsd   = num($("goalUsd").value, DEFAULTS.goalUsd);
+    state.rate      = num($("rate").value, DEFAULTS.rate);
+    var t = parseFloat($("tax").value);
+    state.tax = (isFinite(t) && t >= 0 && t < 100) ? t : DEFAULTS.tax;
+    var games = parseGames($("gamesList").value);
+    state.games = games.length ? games : DEFAULT_GAMES.slice();
+    save(); fillSettings(); renderTabs(); renderGameChips(); render();
+    toast("Settings saved");
+  });
+  function fillSettings(){
+    $("gamesList").value = state.games.join(", ");
+    $("goalRobux").value = state.goalRobux;
+    $("goalUsd").value = state.goalUsd;
+    $("rate").value = state.rate;
+    $("tax").value = state.tax;
+  }
+
+  // ---- Roblox CSV import ------------------------------------------------
+  function parseCSV(text){
+    var rows = [], row = [], cur = "", quoted = false;
+    for(var i = 0; i < text.length; i++){
+      var c = text.charAt(i);
+      if(quoted){
+        if(c === '"'){ if(text.charAt(i+1) === '"'){ cur += '"'; i++; } else quoted = false; }
+        else cur += c;
+      }else{
+        if(c === '"') quoted = true;
+        else if(c === ","){ row.push(cur); cur = ""; }
+        else if(c === "\n"){ row.push(cur); rows.push(row); row = []; cur = ""; }
+        else if(c !== "\r") cur += c;
+      }
+    }
+    if(cur.length || row.length){ row.push(cur); rows.push(row); }
+    return rows.filter(function(r){ return r.some(function(c){ return c.trim() !== ""; }); });
+  }
+  function findHeader(rows){
+    for(var i = 0; i < Math.min(rows.length,10); i++){
+      var cells = rows[i].map(function(c){ return c.trim().toLowerCase(); });
+      if(cells.some(function(c){ return /date|time/.test(c); }) &&
+         cells.some(function(c){ return /amount|robux|price|earn|value/.test(c); })) return i;
+    }
+    return -1;
+  }
+  function pickCol(cells, patterns){
+    for(var p = 0; p < patterns.length; p++){
+      for(var i = 0; i < cells.length; i++){ if(patterns[p].test(cells[i])) return i; }
+    }
+    return -1;
+  }
+  function parseAmount(raw){
+    var s = String(raw).trim();
+    if(!s) return NaN;
+    var neg = /^\(.*\)$/.test(s) || s.indexOf("-") === 0 || s.indexOf("−") === 0;
+    var digits = s.replace(/[^0-9.]/g,"");
+    if(!digits) return NaN;
+    var n = parseFloat(digits);
+    if(!isFinite(n)) return NaN;
+    return neg ? -n : n;
+  }
+  function parseDate(raw){
+    var s = String(raw).trim();
+    if(!s) return todayISO();
+    var iso = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso) return iso[1] + "-" + iso[2] + "-" + iso[3];
+    var us = s.match(/^(\d{1,2})[\/.](\d{1,2})[\/.](\d{4})/);
+    if(us) return us[3] + "-" + pad(+us[1]) + "-" + pad(+us[2]);
+    var d = new Date(s);
+    if(!isNaN(d.getTime())) return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate());
+    return todayISO();
+  }
+  function mapSource(type, desc){
+    var s = ((type||"") + " " + (desc||"")).toLowerCase();
+    if(/game ?pass/.test(s)) return "Game Pass";
+    if(/developer ?product|dev ?product/.test(s)) return "Dev Product";
+    if(/premium|engagement/.test(s)) return "Premium Payout";   // also matches /payout/
+    if(/group ?payout|payout/.test(s)) return "Group Payout";
+    if(/commission|affiliate|referral/.test(s)) return "Affiliate";
+    if(/ugc|avatar|accessory|clothing|shirt|pants|bundle|asset|sale of goods|item/.test(s)) return "UGC / Avatar item";
+    if(/gift|bonus/.test(s)) return "Gift";
+    return "Other";
+  }
+  function importRoblox(text){
+    var rows = parseCSV(text), h = findHeader(rows);
+    if(h === -1){ toast("That doesn't look like a Roblox export"); return; }
+    var header = rows[h].map(function(c){ return c.trim().toLowerCase(); });
+    var iDate = pickCol(header, [/^date$/, /transaction date/, /created/, /date|time/]);
+    var iAmt  = pickCol(header, [/currency amount/, /robux/, /^amount$/, /amount/, /price|value|earn/]);
+    var iType = pickCol(header, [/transaction type/, /^type$/, /event|category/]);
+    var iDesc = pickCol(header, [/item name/, /description/, /detail/, /^name$/, /product/]);
+    if(iAmt === -1){ toast("Couldn't find an amount column"); return; }
+
+    var seen = {};
+    state.entries.forEach(function(e){ if(e.k) seen[e.k] = true; });
+
+    var tagRaw = $("importGame").value.trim();
+    var tag = (!tagRaw || tagRaw.toLowerCase() === UNASSIGNED.toLowerCase()) ? "" : tagRaw;
+    if(tag && state.games.indexOf(tag) === -1){ state.games.push(tag); }
+
+    var added = 0, dupes = 0, spends = 0, skipped = 0;
+    for(var r = h+1; r < rows.length; r++){
+      var cells = rows[r];
+      var amount = parseAmount(cells[iAmt]);
+      if(!isFinite(amount) || amount === 0){ skipped++; continue; }
+      if(amount < 0){ spends++; continue; }
+      var date = iDate === -1 ? todayISO() : parseDate(cells[iDate]);
+      var type = iType === -1 ? "" : String(cells[iType]||"").trim();
+      var desc = iDesc === -1 ? "" : String(cells[iDesc]||"").trim();
+      var key = (tag ? tag + "|" : "") + date + "|" + amount + "|" + type + "|" + desc;
+      if(seen[key]){ dupes++; continue; }
+      seen[key] = true;
+      state.entries.push({
+        id: uid(), amount: Math.round(amount), source: mapSource(type, desc), game: tag,
+        date: date, note: (desc || type || "Roblox import").slice(0,80), k: key
+      });
+      added++;
+    }
+
+    var parts = [];
+    parts.push(added ? "Imported " + fmt(added) + " earning" + (added === 1 ? "" : "s") + " 🎉"
+                     : "No new earnings found");
+    if(dupes)   parts.push(fmt(dupes) + " already logged");
+    if(spends)  parts.push(fmt(spends) + " spend" + (spends === 1 ? "" : "s") + " skipped");
+    if(skipped) parts.push(fmt(skipped) + " row" + (skipped === 1 ? "" : "s") + " skipped");
+
+    state.lastImport = todayISO() + " · " + fmt(added) + " added" + (tag ? " to " + tag : "");
+    save(); renderTabs(); renderGameChips(); render();
+    if(added) popCoins($("robloxBtn"));
+    toast(parts.join(" · "));
+  }
+  $("robloxBtn").addEventListener("click", function(){ $("robloxFile").click(); });
+  $("robloxFile").addEventListener("change", function(ev){
+    var file = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{ importRoblox(String(reader.result)); }catch(err){ toast("Couldn't read that file"); }
+    };
+    reader.onerror = function(){ toast("Couldn't read that file"); };
+    reader.readAsText(file);
+  });
+
+  // ---- export / backup --------------------------------------------------
+  // A normal browser downloads directly; a host that brokers saves (the Claude
+  // artifact viewer) goes through its own prompt.
+  async function download(name, text, type){
+    if(typeof claude !== "undefined" && claude && typeof claude.use === "function"){
+      var host = null;
+      try{ host = await claude.use("downloads"); }catch(e){ host = null; }
+      if(host){
+        try{
+          await host.save({ filename:name, data:text });
+          toast("Saved " + name);
+        }catch(err){
+          var code = err && err.code;
+          if(code === "extension_not_enabled" && /\.csv$/.test(name)){
+            try{
+              await host.save({ filename:name.replace(/\.csv$/,".txt"), data:text });
+              toast("Saved as a .txt file");
+            }catch(e2){ toast("Couldn't save the file here"); }
+          }else if(code !== "declined"){ toast("Couldn't save the file here"); }
+        }
+        return;
+      }
+    }
+    var blob = new Blob([text], {type:type});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  }
+
+  $("expCsv").addEventListener("click", function(){
+    if(!state.entries.length){ toast("Nothing to export"); return; }
+    var rows = [["date","amount_robux","source","note"]];
+    state.entries.slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; }).forEach(function(e){
+      rows.push([e.date, e.amount, e.source, e.note || ""]);
+    });
+    var csv = rows.map(function(r){
+      return r.map(function(c){ return '"' + String(c).replace(/"/g,'""') + '"'; }).join(",");
+    }).join("\n");
+    download("robux-earnings-" + todayISO() + ".csv", csv, "text/csv");
+  });
+  $("expJson").addEventListener("click", function(){
+    download("robux-tracker-backup-" + todayISO() + ".json", JSON.stringify(state,null,2), "application/json");
+  });
+  $("impBtn").addEventListener("click", function(){ $("impFile").click(); });
+  $("impFile").addEventListener("change", function(ev){
+    var file = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try{
+        var data = JSON.parse(String(reader.result));
+        if(!data || !Array.isArray(data.entries)) throw new Error("bad file");
+        if(!confirm("Replace current data with " + fmt(data.entries.length) + " entries from this backup?")) return;
+        state = {
+          entries: data.entries,
+          goalRobux: num(data.goalRobux, DEFAULTS.goalRobux),
+          goalUsd: num(data.goalUsd, DEFAULTS.goalUsd),
+          rate: num(data.rate, DEFAULTS.rate),
+          tax: (typeof data.tax === "number" && data.tax >= 0 && data.tax < 100) ? data.tax : DEFAULTS.tax,
+          lastSource: data.lastSource || NAMES[0],
+          lastImport: data.lastImport || "",
+          games: (Array.isArray(data.games) && data.games.length) ? data.games : DEFAULT_GAMES.slice(),
+          lastGame: typeof data.lastGame === "string" ? data.lastGame : DEFAULT_GAMES[0],
+          celebrated: (typeof data.celebrated === "number") ? data.celebrated : null
+        };
+        picked = state.lastSource;
+        pickedGame = state.lastGame;
+        save(); fillSettings(); renderChips(); renderGameChips(); renderTabs(); render();
+        toast("Backup restored");
+      }catch(err){ toast("That file isn't a valid backup"); }
+    };
+    reader.readAsText(file);
+  });
+
+  // ---- boot -------------------------------------------------------------
+  $("date").value = todayISO();
+  fillSettings();
+  renderChips();
+  renderGameChips();
+  renderTabs();
+  render();
+
+  if(location.protocol !== "file:" && "serviceWorker" in navigator){
+    // updateViaCache:"none" stops the browser serving a stale worker script,
+    // so a new build is picked up on the next launch rather than eventually.
+    navigator.serviceWorker.register("sw.js", { updateViaCache: "none" })
+      .then(function(reg){
+        reg.update();
+        setInterval(function(){ reg.update(); }, 30*60*1000);
+      })
+      .catch(function(){ /* offline cache is optional */ });
+
+    // When a new worker takes over, reload once so the fresh build is on screen.
+    var hadController = !!navigator.serviceWorker.controller;
+    var reloaded = false;
+    navigator.serviceWorker.addEventListener("controllerchange", function(){
+      if(!hadController || reloaded) return;   // first install shouldn't reload
+      reloaded = true;
+      location.reload();
+    });
+  }
+})();
+</script>
+</body>
+</html>
