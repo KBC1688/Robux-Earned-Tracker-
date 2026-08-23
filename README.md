@@ -42,15 +42,24 @@ overlapping date ranges never double-count.
 
 ### Option A — GitHub Pages (recommended, installs like a real app)
 
-1. In this repo on GitHub: **Settings → Pages → Source: Deploy from a branch**,
-   pick the branch and the `/ (root)` folder, then save.
-2. Wait a minute, then open the published URL on your phone
-   (`https://<your-username>.github.io/Robux-Earned-Tracker-/`).
-3. Add it to your home screen:
+GitHub Pages needs the repository to be **public**, unless the account is on a
+paid GitHub plan.
+
+1. **Settings → General**, scroll to the bottom, **Change repository visibility
+   → Public**.
+2. **Settings → Pages → Source: Deploy from a branch**. Pick branch
+   `claude/local-phone-app-script-9lh2lr` and folder `/ (root)`, then **Save**.
+3. Wait about a minute, then open
+   `https://kbc1688.github.io/Robux-Earned-Tracker-/` on your phone.
+4. Add it to your home screen:
    - **iPhone (Safari):** Share button → *Add to Home Screen*
    - **Android (Chrome):** ⋮ menu → *Install app* / *Add to Home screen*
 
 It then opens full screen with its own icon and keeps working with no signal.
+Every later push to that branch republishes the site automatically.
+
+Making the repo public shares the app's source code. It does not share anything
+you log — entries live in your phone's browser storage and are never committed.
 
 ### Option B — no hosting at all
 
