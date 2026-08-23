@@ -12,6 +12,10 @@ buttons, and your own avatar in the player card.
 
 - **Player card** — your avatar, a level that climbs with the Robux goal
   (level 50 lands exactly on it) and a rank that changes as you go
+- **A farm in Sweden** that builds across ten milestones of the USD goal — land,
+  fence, red stuga, barn, crop fields, pine forest, sheep, lake, greenhouse and
+  finally the flag. Each plot lands with confetti; locked pieces show as ghosts
+- **Per-game tabs** — see what each game has contributed, and its share of the total
 - **Two goal rings** — Robux earned against a 1.5B goal, and take-home USD
   against a $3,500,000 goal
 - **Tax built in** — converts Robux to USD at the DevEx rate, takes 35% off the

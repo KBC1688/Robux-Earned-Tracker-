@@ -1,6 +1,6 @@
 // Offline cache for Robux Earned Tracker.
 // Bump CACHE when files change so phones pick up the new version.
-var CACHE = "robux-tracker-v3";
+var CACHE = "robux-tracker-v4";
 var FILES = [
   "./",
   "./index.html",

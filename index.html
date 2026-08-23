@@ -120,6 +120,46 @@
   .r-usd .plate{border-color:#c98a11;box-shadow:0 3px 0 #4d3406, inset 0 0 18px rgba(255,201,60,.18)}
   .r-usd .plate b{color:#ffdf8a}
 
+  /* ---------- farm ---------- */
+  .farm{border-radius:16px;overflow:hidden;border:2px solid #5233c9;box-shadow:0 3px 0 rgba(0,0,0,.35)}
+  .farm svg{width:100%;height:auto;display:block}
+  .piece{opacity:.07;transition:opacity .7s ease}
+  .piece.on{opacity:1}
+  .piece.fresh{animation:plotPop .9s cubic-bezier(.34,1.5,.5,1)}
+  @keyframes plotPop{0%{opacity:0;transform:translateY(9px) scale(.9)}
+    60%{opacity:1;transform:translateY(-2px) scale(1.04)}100%{opacity:1;transform:none}}
+  .pips{display:flex;gap:5px;margin:11px 0 8px}
+  .pips i{flex:1;height:7px;border-radius:99px;background:var(--sunk);
+          border:1.5px solid #4c31b8;transition:background .4s}
+  .pips i.on{background:linear-gradient(90deg,#7ef07e,var(--green));border-color:#2f9c3a}
+  .farmcap{font-size:12.5px;font-weight:800;color:#d9cdff;text-align:center}
+  .farmcap b{color:var(--gold)}
+
+  /* ---------- game tabs ---------- */
+  .tabs{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 6px;margin-bottom:11px;
+        scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:none;background:linear-gradient(180deg,#3d2896,#2c1b70);border:2px solid #5b3fd0;
+       color:#cfc2ff;border-radius:99px;padding:8px 14px;font-family:var(--body);
+       font-size:12.5px;font-weight:800;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.3)}
+  .tab[aria-selected="true"]{background:linear-gradient(180deg,#ffdf8a,var(--gold-2));
+       border-color:#8a5c05;color:#3a2500;box-shadow:0 3px 0 #6b4704}
+  .gsum{display:flex;gap:8px;margin-bottom:11px}
+  .gsum > div{flex:1;background:var(--sunk);border:2px solid #4c31b8;border-radius:14px;
+              padding:8px 10px;min-width:0}
+  .gsum span{display:block;font-size:10.5px;font-weight:900;letter-spacing:.7px;
+             text-transform:uppercase;color:var(--muted);white-space:nowrap;
+             overflow:hidden;text-overflow:ellipsis}
+  .gsum b{display:block;font-family:var(--display);font-size:16px;font-weight:600;
+          font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .gsum .g-rbx b{color:#9cf59c}
+  .gsum .g-usd b{color:var(--gold)}
+  .gsum .g-shr b{color:#fff}
+
+  .confetti{position:fixed;top:-16px;width:9px;height:15px;border-radius:2px;z-index:60;
+            pointer-events:none;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(108vh) rotate(760deg);opacity:.15}}
+
   /* ---------- section heads ---------- */
   .sec{display:flex;align-items:center;gap:8px;margin:0 0 11px}
   .sec .ico{font-size:20px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}
@@ -298,6 +338,154 @@
 
 <section class="panel">
   <div class="in">
+    <div class="sec"><span class="ico">🇸🇪</span><h2 class="sticker">The farm in Sweden</h2></div>
+    <div class="farm">
+<svg viewBox="0 0 320 170" role="img" id="farmSvg" aria-label="Farm build progress">
+  <defs>
+    <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#150c46"/><stop offset="62%" stop-color="#39288c"/>
+      <stop offset="100%" stop-color="#7659c8"/></linearGradient>
+    <linearGradient id="grassG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#46ad52"/><stop offset="100%" stop-color="#22762f"/></linearGradient>
+    <linearGradient id="lakeG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8fd6f5"/><stop offset="100%" stop-color="#2f7fb8"/></linearGradient>
+    <linearGradient id="aurG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4ade4a" stop-opacity="0"/>
+      <stop offset="45%" stop-color="#4ade4a" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/></linearGradient>
+    <clipPath id="frame"><rect x="0" y="0" width="320" height="170" rx="15"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#frame)">
+    <rect x="0" y="0" width="320" height="170" fill="url(#skyG)"/>
+    <g fill="#fff" opacity=".7">
+      <circle cx="24" cy="18" r="1.1"/><circle cx="62" cy="34" r="1"/><circle cx="104" cy="14" r="1.3"/>
+      <circle cx="146" cy="30" r="1"/><circle cx="188" cy="16" r="1.2"/><circle cx="228" cy="40" r="1"/>
+      <circle cx="292" cy="52" r="1.1"/><circle cx="256" cy="12" r="1"/><circle cx="12" cy="52" r="1"/>
+    </g>
+    <circle cx="270" cy="30" r="12" fill="#ffe9a8" opacity=".92"/>
+    <circle cx="265" cy="26" r="12" fill="#39288c" opacity=".55"/>
+
+    <!-- 10: aurora sits behind everything on the ground -->
+    <g id="p10a" class="piece">
+      <path d="M-10,44 Q60,10 140,40 Q220,70 330,28 L330,70 Q220,104 140,74 Q60,44 -10,78 Z"
+            fill="url(#aurG)"/>
+      <path d="M-10,26 Q80,-2 170,22 Q250,42 330,12 L330,40 Q250,68 170,48 Q80,26 -10,54 Z"
+            fill="url(#aurG)" opacity=".55"/>
+    </g>
+
+    <!-- 1: the land -->
+    <g id="p1" class="piece">
+      <path d="M0,112 Q52,97 104,110 Q158,123 212,106 Q268,90 320,105 L320,170 L0,170 Z" fill="url(#grassG)"/>
+      <path d="M0,134 Q80,126 160,140 Q240,153 320,141 L320,170 L0,170 Z" fill="#2f9440" opacity=".5"/>
+    </g>
+
+    <!-- 6: pine forest, behind the buildings -->
+    <g id="p6" class="piece" fill="#1d6b37">
+      <polygon points="14,112 26,80 38,112"/><polygon points="34,112 44,88 54,112"/>
+      <polygon points="0,112 10,92 20,112"/>
+      <polygon points="282,108 294,76 306,108"/><polygon points="266,108 276,86 286,108"/>
+      <polygon points="302,108 312,88 320,108"/>
+      <g fill="#0f4d26"><rect x="24.5" y="108" width="3" height="7"/><rect x="292.5" y="104" width="3" height="7"/></g>
+    </g>
+
+    <!-- 3: the red stuga -->
+    <g id="p3" class="piece">
+      <path d="M150,172 Q160,150 143,132 Q126,116 128,124" stroke="#d2a86e" stroke-width="7"
+            fill="none" stroke-linecap="round" opacity=".9"/>
+      <rect x="96" y="104" width="46" height="25" rx="2" fill="#b5342a"/>
+      <polygon points="90,106 119,85 148,106" fill="#f5efe0"/>
+      <polygon points="93,105 119,88 145,105" fill="#7d201a"/>
+      <rect x="130" y="88" width="7" height="11" fill="#8a3b2f"/>
+      <rect x="112" y="114" width="13" height="15" rx="1" fill="#f5efe0"/>
+      <rect x="114" y="116" width="9" height="13" fill="#6d4326"/>
+      <rect x="99" y="109" width="11" height="10" fill="#f5efe0"/>
+      <rect x="101" y="111" width="7" height="6" fill="#ffdc7a"/>
+      <rect x="128" y="109" width="11" height="10" fill="#f5efe0"/>
+      <rect x="130" y="111" width="7" height="6" fill="#ffdc7a"/>
+    </g>
+
+    <!-- 4: the barn -->
+    <g id="p4" class="piece">
+      <polygon points="194,106 202,94 254,94 262,106" fill="#f5efe0"/>
+      <polygon points="197,105 204,96 252,96 259,105" fill="#6f1c16"/>
+      <rect x="198" y="105" width="60" height="26" rx="2" fill="#9c2b22"/>
+      <rect x="217" y="112" width="22" height="19" fill="#f5efe0"/>
+      <path d="M217,112 L239,131 M239,112 L217,131" stroke="#9c2b22" stroke-width="2.4"/>
+      <rect x="203" y="110" width="8" height="7" fill="#ffdc7a"/>
+    </g>
+
+    <!-- 9: the greenhouse -->
+    <g id="p9" class="piece">
+      <polygon points="158,116 172,107 186,116" fill="#cdefff" opacity=".85"/>
+      <rect x="159" y="116" width="26" height="15" rx="1.5" fill="#dff4ff" opacity=".72"/>
+      <path d="M172,107 L172,131 M159,123 L185,123" stroke="#8fd6f5" stroke-width="1.4"/>
+      <rect x="158" y="130" width="28" height="2.5" fill="#6d4326"/>
+      <g fill="#3fa14a"><circle cx="165" cy="127" r="2.2"/><circle cx="172" cy="128" r="2"/><circle cx="180" cy="127" r="2.2"/></g>
+    </g>
+
+    <!-- 8: lake and jetty -->
+    <g id="p8" class="piece">
+      <ellipse cx="44" cy="139" rx="40" ry="12" fill="url(#lakeG)"/>
+      <path d="M14,137 Q28,134 44,137 M30,143 Q46,140 62,143" stroke="#eaf7ff" stroke-width="1.3"
+            fill="none" opacity=".75" stroke-linecap="round"/>
+      <rect x="60" y="136" width="20" height="3.5" rx="1" fill="#8a5a30"/>
+      <rect x="62" y="139" width="2.5" height="6" fill="#6d4326"/>
+      <rect x="75" y="139" width="2.5" height="6" fill="#6d4326"/>
+    </g>
+
+    <!-- 5: crop fields -->
+    <g id="p5" class="piece">
+      <path d="M196,150 L214,133 L268,133 L256,150 Z" fill="#c9a227" opacity=".85"/>
+      <g stroke="#8a6a12" stroke-width="1.3" opacity=".8">
+        <path d="M204,148 L219,136"/><path d="M214,148 L229,136"/><path d="M224,148 L239,136"/>
+        <path d="M234,148 L249,136"/><path d="M244,148 L259,136"/>
+      </g>
+      <g fill="#e6c34a"><circle cx="212" cy="140" r="1.6"/><circle cx="232" cy="143" r="1.6"/><circle cx="252" cy="139" r="1.6"/></g>
+    </g>
+
+    <!-- 7: sheep -->
+    <g id="p7" class="piece">
+      <g><ellipse cx="96" cy="150" rx="8" ry="6" fill="#f6f2ea"/><circle cx="103" cy="147" r="3.4" fill="#3a3a44"/>
+         <rect x="92" y="154" width="2" height="4" fill="#3a3a44"/><rect x="99" y="154" width="2" height="4" fill="#3a3a44"/></g>
+      <g><ellipse cx="120" cy="156" rx="7" ry="5.2" fill="#f6f2ea"/><circle cx="126" cy="153.5" r="3" fill="#3a3a44"/>
+         <rect x="116" y="159" width="1.8" height="3.6" fill="#3a3a44"/><rect x="122" y="159" width="1.8" height="3.6" fill="#3a3a44"/></g>
+      <g><ellipse cx="74" cy="157" rx="6.4" ry="4.8" fill="#f6f2ea"/><circle cx="79" cy="155" r="2.8" fill="#3a3a44"/>
+         <rect x="70" y="160" width="1.7" height="3.4" fill="#3a3a44"/><rect x="76" y="160" width="1.7" height="3.4" fill="#3a3a44"/></g>
+    </g>
+
+    <!-- 2: the fence, front-most -->
+    <g id="p2" class="piece">
+      <g fill="#c58b4e">
+        <rect x="0" y="152" width="320" height="3.6" rx="1.8"/>
+        <rect x="0" y="161" width="320" height="3.6" rx="1.8"/>
+      </g>
+      <g fill="#a97038">
+        <rect x="8" y="147" width="4.5" height="22" rx="1.5"/><rect x="48" y="147" width="4.5" height="22" rx="1.5"/>
+        <rect x="88" y="147" width="4.5" height="22" rx="1.5"/><rect x="128" y="147" width="4.5" height="22" rx="1.5"/>
+        <rect x="168" y="147" width="4.5" height="22" rx="1.5"/><rect x="208" y="147" width="4.5" height="22" rx="1.5"/>
+        <rect x="248" y="147" width="4.5" height="22" rx="1.5"/><rect x="288" y="147" width="4.5" height="22" rx="1.5"/>
+      </g>
+    </g>
+
+    <!-- 10: the flag -->
+    <g id="p10b" class="piece">
+      <rect x="150" y="74" width="2.6" height="78" rx="1.3" fill="#e8e4f5"/>
+      <rect x="152.6" y="76" width="28" height="17" rx="1" fill="#006aa7"/>
+      <rect x="161" y="76" width="5" height="17" fill="#fecc00"/>
+      <rect x="152.6" y="82" width="28" height="5" fill="#fecc00"/>
+      <circle cx="151.3" cy="72" r="2.4" fill="#ffe9a8"/>
+    </g>
+  </g>
+</svg>
+    </div>
+    <div class="pips" id="pips" aria-hidden="true"></div>
+    <div class="farmcap" id="farmCap"></div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="in">
     <div class="sec"><span class="ico">💵</span><h2 class="sticker">USD after tax</h2></div>
     <div class="rows">
       <div><span class="lb"><span>💎</span>Converted at DevEx rate</span><b id="usdGross">$0.00</b></div>
@@ -310,12 +498,24 @@
 
 <section class="panel">
   <div class="in">
+    <div class="sec"><span class="ico">🎮</span><h2 class="sticker">By game</h2></div>
+    <div class="tabs" id="tabs" role="tablist"></div>
+    <div class="gsum">
+      <div class="g-rbx"><span>Robux</span><b id="gRbx">0</b></div>
+      <div class="g-usd"><span>Take-home</span><b id="gUsd">$0</b></div>
+      <div class="g-shr"><span id="gShrLabel">Entries</span><b id="gShr">0</b></div>
+    </div>
     <div class="tiles">
       <div class="tile t-green"><span class="lb"><span>📅</span>This week</span><b id="wk">0</b></div>
       <div class="tile t-blue"><span class="lb"><span>🗓️</span>This month</span><b id="mo">0</b></div>
       <div class="tile t-purple"><span class="lb"><span>🏅</span>Best day</span><b id="best">0</b></div>
       <div class="tile t-orange"><span class="lb"><span>📊</span>Daily average</span><b id="avg">0</b></div>
     </div>
+    <div class="sec" style="margin:15px 0 10px"><span class="ico">📜</span>
+      <h2 class="sticker">History</h2>
+      <a class="link" id="clearAll" role="button" tabindex="0" style="margin-left:auto">Clear all</a></div>
+    <div id="list"></div>
+    <button class="btn plain sm" id="showMore" style="display:none">Show all entries</button>
   </div>
 </section>
 
@@ -327,6 +527,8 @@
       <span class="pre">R$</span>
       <input id="amount" type="number" inputmode="numeric" step="1" placeholder="250">
     </div>
+    <label>Which game?</label>
+    <div class="chips" id="gameChips"></div>
     <label>Where from?</label>
     <div class="chips" id="chips"></div>
     <label for="date">When?</label>
@@ -351,6 +553,9 @@
       <li>Pick your dates and tap <b>Export</b></li>
       <li>Come back and load the file below</li>
     </ol>
+    <label for="importGame">Tag these rows as</label>
+    <input list="gameList" id="importGame" placeholder="Unassigned">
+    <datalist id="gameList"></datalist>
     <button class="btn gold" id="robloxBtn">Import Roblox CSV 📥</button>
     <input id="robloxFile" type="file" accept=".csv,text/csv" style="display:none">
     <div class="hint" id="lastImport"></div>
@@ -359,17 +564,11 @@
 
 <section class="panel">
   <div class="in">
-    <div class="sec"><span class="ico">📜</span><h2 class="sticker">History</h2>
-      <a class="link" id="clearAll" role="button" tabindex="0" style="margin-left:auto">Clear all</a></div>
-    <div id="list"><div class="empty"><span class="big">🪙</span>Nothing logged yet — add your first earning!</div></div>
-    <button class="btn plain sm" id="showMore" style="display:none">Show all entries</button>
-  </div>
-</section>
-
-<section class="panel">
-  <div class="in">
     <details>
       <summary><span class="ico">⚙️</span><h2 class="sticker" style="font-size:16px;margin:0;text-transform:uppercase;letter-spacing:.8px">Settings &amp; backup</h2><span class="caret">▾</span></summary>
+      <label for="gamesList">Your games (one per line)</label>
+      <input id="gamesList" placeholder="Whimsy World">
+      <div class="hint">Comma-separated. Each one gets its own tab.</div>
       <label for="goalRobux">Robux goal</label>
       <input id="goalRobux" type="number" inputmode="numeric" step="1" placeholder="1500000000">
       <label for="goalUsd">USD goal (take-home)</label>
@@ -406,6 +605,17 @@
   var NAMES = SOURCES.map(function(s){ return s[0]; });
 
   var DEFAULTS = { rate:0.0035, tax:35, goalRobux:1500000000, goalUsd:3500000 };
+  var DEFAULT_GAMES = ["Whimsy World","Cog Cleanup"];
+  var UNASSIGNED = "Unassigned";
+
+  // The farm builds one plot per 10% of the USD goal.
+  var FARM = [
+    { ids:["p1"],  name:"The land" },        { ids:["p2"],  name:"The fence" },
+    { ids:["p3"],  name:"The red stuga" },   { ids:["p4"],  name:"The barn" },
+    { ids:["p5"],  name:"The crop fields" }, { ids:["p6"],  name:"The pine forest" },
+    { ids:["p7"],  name:"The sheep" },       { ids:["p8"],  name:"The lake & jetty" },
+    { ids:["p9"],  name:"The greenhouse" },  { ids:["p10a","p10b"], name:"The Swedish flag" }
+  ];
   var R = 56, CIRC = 2 * Math.PI * R;
   var PAGE = 25;
 
@@ -417,6 +627,8 @@
 
   var state = load();
   var picked = state.lastSource || NAMES[0];
+  var pickedGame = state.lastGame || state.games[0] || UNASSIGNED;
+  var activeTab = "All";
   var showAll = false;
   var idSeed = 0;
 
@@ -425,7 +637,8 @@
     try{ var raw = localStorage.getItem(KEY); if(raw) p = JSON.parse(raw); }catch(e){}
     if(!p || !Array.isArray(p.entries)){
       return { entries:[], goalRobux:DEFAULTS.goalRobux, goalUsd:DEFAULTS.goalUsd,
-               rate:DEFAULTS.rate, tax:DEFAULTS.tax, lastSource:NAMES[0], lastImport:"" };
+               rate:DEFAULTS.rate, tax:DEFAULTS.tax, lastSource:NAMES[0], lastImport:"",
+               games:DEFAULT_GAMES.slice(), lastGame:DEFAULT_GAMES[0], celebrated:0 };
     }
     return {
       entries: p.entries,
@@ -434,7 +647,11 @@
       rate: num(p.rate, DEFAULTS.rate),
       tax: (typeof p.tax === "number" && p.tax >= 0 && p.tax < 100) ? p.tax : DEFAULTS.tax,
       lastSource: p.lastSource || NAMES[0],
-      lastImport: p.lastImport || ""
+      lastImport: p.lastImport || "",
+      games: (Array.isArray(p.games) && p.games.length) ? p.games : DEFAULT_GAMES.slice(),
+      lastGame: typeof p.lastGame === "string" ? p.lastGame : DEFAULT_GAMES[0],
+      // null means "never checked" — adopt the current plot without a party
+      celebrated: (typeof p.celebrated === "number") ? p.celebrated : null
     };
   }
   function uid(){ return Date.now() * 1000 + (idSeed++ % 1000); }
@@ -489,6 +706,28 @@
     toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 3200);
   }
 
+  function reducedMotion(){
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
+  function confetti(count){
+    if(reducedMotion()) return;
+    var colors = ["#4ade4a","#ffc93c","#ff6b6b","#5b9dff","#f472d0","#ffffff","#a78bfa"];
+    for(var i = 0; i < count; i++){
+      (function(i){
+        var d = document.createElement("div");
+        d.className = "confetti";
+        d.style.left = (Math.random()*100) + "vw";
+        d.style.background = colors[i % colors.length];
+        d.style.animationDelay = (Math.random()*0.6).toFixed(2) + "s";
+        d.style.animationDuration = (1.9 + Math.random()*1.5).toFixed(2) + "s";
+        if(i % 3 === 0){ d.style.width = "7px"; d.style.height = "7px"; d.style.borderRadius = "50%"; }
+        document.body.appendChild(d);
+        setTimeout(function(){ d.remove(); }, 4200);
+      })(i);
+    }
+  }
+
   // little coins floating off the button
   function popCoins(el){
     if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -539,6 +778,58 @@
     $(svgId).setAttribute("aria-label", label + ": " + shortFn(value) + " of " + shortFn(goal) + ", " + fmtPct(pct));
   }
 
+  function renderFarm(net){
+    var goal = state.goalUsd;
+    var done = goal > 0 ? Math.min(FARM.length, Math.floor(net/goal*FARM.length)) : 0;
+
+    // first run on an existing save adopts the current plot silently
+    var isNew = state.celebrated !== null && done > state.celebrated;
+    if(state.celebrated !== done){
+      state.celebrated = done;   // follows downward too, so a reset can re-celebrate
+      save();
+    }
+
+    FARM.forEach(function(piece, i){
+      piece.ids.forEach(function(id){
+        var el = $(id);
+        if(!el) return;
+        var on = i < done;
+        el.classList.toggle("on", on);
+        if(on && isNew && i === done-1 && !reducedMotion()){
+          el.classList.remove("fresh"); void el.getBoundingClientRect(); el.classList.add("fresh");
+          setTimeout(function(){ el.classList.remove("fresh"); }, 1000);
+        }
+      });
+    });
+
+    var pips = $("pips");
+    if(pips.childNodes.length !== FARM.length){
+      pips.innerHTML = "";
+      FARM.forEach(function(){ pips.appendChild(document.createElement("i")); });
+    }
+    for(var k = 0; k < FARM.length; k++){
+      pips.childNodes[k].classList.toggle("on", k < done);
+    }
+
+    var cap = $("farmCap");
+    if(done >= FARM.length){
+      cap.innerHTML = "Farm complete — see you in Sweden! 🇸🇪";
+    }else{
+      cap.innerHTML = "Plot <b>" + done + " of " + FARM.length + "</b> · next: " +
+        FARM[done].name + " at <b>" + money(goal*(done+1)/FARM.length) + "</b>";
+    }
+
+    if(isNew){
+      confetti(70);
+      // let the "+X R$" toast land first, then take the stage
+      setTimeout(function(){
+        toast(done >= FARM.length
+          ? "The farm is finished! See you in Sweden 🇸🇪🎉"
+          : FARM[done-1].name + " built! " + done + "/" + FARM.length + " plots 🎉");
+      }, 900);
+    }
+  }
+
   function rankFor(pct){
     for(var i = 0; i < RANKS.length; i++){ if(pct >= RANKS[i][0]) return RANKS[i][1]; }
     return "New Dev";
@@ -551,8 +842,55 @@
     return {lvl: Math.min(50, 1 + Math.floor(raw)), frac: raw - Math.floor(raw)};
   }
 
+  function tabList(){
+    var tabs = ["All"].concat(state.games);
+    if(state.entries.some(function(e){ return !e.game; })) tabs.push(UNASSIGNED);
+    return tabs;
+  }
+
+  function renderTabs(){
+    var wrap = $("tabs"), tabs = tabList();
+    if(tabs.indexOf(activeTab) === -1) activeTab = "All";
+    wrap.innerHTML = "";
+    tabs.forEach(function(t){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "tab"; b.setAttribute("role","tab");
+      b.setAttribute("aria-selected", t === activeTab ? "true" : "false");
+      b.textContent = t;
+      b.addEventListener("click", function(){ activeTab = t; showAll = false; renderTabs(); render(); });
+      wrap.appendChild(b);
+    });
+
+    var list = $("gameList");
+    list.innerHTML = "";
+    state.games.forEach(function(g){
+      var o = document.createElement("option"); o.value = g; list.appendChild(o);
+    });
+  }
+
+  function renderGameChips(){
+    var wrap = $("gameChips");
+    var opts = state.games.concat([UNASSIGNED]);
+    if(opts.indexOf(pickedGame) === -1) pickedGame = opts[0];
+    wrap.innerHTML = "";
+    opts.forEach(function(g){
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip";
+      b.setAttribute("aria-pressed", g === pickedGame ? "true" : "false");
+      b.textContent = g;
+      b.addEventListener("click", function(){ pickedGame = g; renderGameChips(); });
+      wrap.appendChild(b);
+    });
+  }
+
+  function inTab(e){
+    if(activeTab === "All") return true;
+    if(activeTab === UNASSIGNED) return !e.game;
+    return e.game === activeTab;
+  }
+
   function render(){
-    var entries = state.entries.slice().sort(function(a,b){
+    var entries = state.entries.filter(inTab).sort(function(a,b){
       if(a.date === b.date) return b.id - a.id;
       return a.date < b.date ? 1 : -1;
     });
@@ -579,20 +917,37 @@
     var taxAmt = gross * (state.tax/100);
     var net = gross - taxAmt;
 
-    setRing("arcR","dotR","valR","pctR","svgR", total, state.goalRobux, "Robux earned", fmtShort);
-    setRing("arcU","dotU","valU","pctU","svgU", net, state.goalUsd, "USD after tax", moneyShort);
+    // the farm tracks the whole journey, never one game's slice
+    var allRobux = 0;
+    state.entries.forEach(function(e){ allRobux += e.amount; });
+    var allNet = allRobux * state.rate * (1 - state.tax/100);
+    renderFarm(allNet);
+
+    $("gRbx").textContent = fmtShort(total);
+    $("gUsd").textContent = moneyShort(net);
+    if(activeTab === "All"){
+      $("gShrLabel").textContent = "Entries";
+      $("gShr").textContent = fmt(entries.length);
+    }else{
+      $("gShrLabel").textContent = "Share";
+      $("gShr").textContent = allRobux > 0 ? fmtPct(total/allRobux*100) : "0%";
+    }
+
+    setRing("arcR","dotR","valR","pctR","svgR", allRobux, state.goalRobux, "Robux earned", fmtShort);
+    setRing("arcU","dotU","valU","pctU","svgU", allNet, state.goalUsd, "USD after tax", moneyShort);
     $("ofR").textContent = "of " + fmtShort(state.goalRobux);
     $("ofU").textContent = "of " + moneyShort(state.goalUsd) + " after tax";
 
-    var goalPct = state.goalRobux > 0 ? (total/state.goalRobux)*100 : 0;
+    var goalPct = state.goalRobux > 0 ? (allRobux/state.goalRobux)*100 : 0;
     var lv = levelFor(goalPct);
     $("levelChip").textContent = "LVL " + lv.lvl;
     $("xpBar").style.width = (lv.frac*100).toFixed(1) + "%";
-    $("rankName").textContent = total > 0 ? rankFor(goalPct) : "New Dev";
+    $("rankName").textContent = allRobux > 0 ? rankFor(goalPct) : "New Dev";
 
-    $("usdGross").textContent = money(gross);
-    $("usdTax").textContent = "−" + money(taxAmt);
-    $("usdNet").textContent = money(net);
+    var allGross = allRobux * state.rate;
+    $("usdGross").textContent = money(allGross);
+    $("usdTax").textContent = "−" + money(allGross * (state.tax/100));
+    $("usdNet").textContent = money(allNet);
     $("taxLabel").textContent = "Tax amount (" + trim(state.tax) + "%)";
 
     $("wk").textContent = fmtShort(wk);
@@ -604,7 +959,10 @@
     var list = $("list");
     list.innerHTML = "";
     if(!entries.length){
-      list.innerHTML = '<div class="empty"><span class="big">🪙</span>Nothing logged yet — add your first earning!</div>';
+      list.innerHTML = activeTab === "All"
+        ? '<div class="empty"><span class="big">🪙</span>Nothing logged yet — add your first earning!</div>'
+        : '<div class="empty"><span class="big">🔜</span>Nothing from ' + activeTab +
+          ' yet — good luck with the launch!</div>';
       $("showMore").style.display = "none";
       return;
     }
@@ -619,7 +977,8 @@
       var meta = document.createElement("div");
       meta.className = "meta";
       var b = document.createElement("b"); b.textContent = e.source;
-      var sp = document.createElement("span"); sp.textContent = e.date + (e.note ? " · " + e.note : "");
+      var sp = document.createElement("span");
+      sp.textContent = e.date + (e.game ? " · " + e.game : "") + (e.note ? " · " + e.note : "");
       meta.appendChild(b); meta.appendChild(sp);
 
       var amt = document.createElement("div");
@@ -653,9 +1012,11 @@
     if(!amount || amount <= 0){ toast("Enter a Robux amount first"); $("amount").focus(); return; }
     state.entries.push({
       id: uid(), amount: amount, source: picked,
+      game: pickedGame === UNASSIGNED ? "" : pickedGame,
       date: $("date").value || todayISO(), note: $("note").value.trim()
     });
     state.lastSource = picked;
+    state.lastGame = pickedGame;
     save();
     $("amount").value = ""; $("note").value = ""; $("date").value = todayISO();
     render();
@@ -674,15 +1035,28 @@
     if(e.key === "Enter" || e.key === " "){ e.preventDefault(); clearAll(); }
   });
 
+  function parseGames(raw){
+    var out = [];
+    String(raw).split(/[\n,]/).forEach(function(g){
+      g = g.trim();
+      if(g && g.toLowerCase() !== UNASSIGNED.toLowerCase() && out.indexOf(g) === -1) out.push(g);
+    });
+    return out;
+  }
+
   $("saveSettings").addEventListener("click", function(){
     state.goalRobux = num($("goalRobux").value, DEFAULTS.goalRobux);
     state.goalUsd   = num($("goalUsd").value, DEFAULTS.goalUsd);
     state.rate      = num($("rate").value, DEFAULTS.rate);
     var t = parseFloat($("tax").value);
     state.tax = (isFinite(t) && t >= 0 && t < 100) ? t : DEFAULTS.tax;
-    save(); fillSettings(); render(); toast("Settings saved");
+    var games = parseGames($("gamesList").value);
+    state.games = games.length ? games : DEFAULT_GAMES.slice();
+    save(); fillSettings(); renderTabs(); renderGameChips(); render();
+    toast("Settings saved");
   });
   function fillSettings(){
+    $("gamesList").value = state.games.join(", ");
     $("goalRobux").value = state.goalRobux;
     $("goalUsd").value = state.goalUsd;
     $("rate").value = state.rate;
@@ -766,6 +1140,10 @@
     var seen = {};
     state.entries.forEach(function(e){ if(e.k) seen[e.k] = true; });
 
+    var tagRaw = $("importGame").value.trim();
+    var tag = (!tagRaw || tagRaw.toLowerCase() === UNASSIGNED.toLowerCase()) ? "" : tagRaw;
+    if(tag && state.games.indexOf(tag) === -1){ state.games.push(tag); }
+
     var added = 0, dupes = 0, spends = 0, skipped = 0;
     for(var r = h+1; r < rows.length; r++){
       var cells = rows[r];
@@ -775,11 +1153,11 @@
       var date = iDate === -1 ? todayISO() : parseDate(cells[iDate]);
       var type = iType === -1 ? "" : String(cells[iType]||"").trim();
       var desc = iDesc === -1 ? "" : String(cells[iDesc]||"").trim();
-      var key = date + "|" + amount + "|" + type + "|" + desc;
+      var key = (tag ? tag + "|" : "") + date + "|" + amount + "|" + type + "|" + desc;
       if(seen[key]){ dupes++; continue; }
       seen[key] = true;
       state.entries.push({
-        id: uid(), amount: Math.round(amount), source: mapSource(type, desc),
+        id: uid(), amount: Math.round(amount), source: mapSource(type, desc), game: tag,
         date: date, note: (desc || type || "Roblox import").slice(0,80), k: key
       });
       added++;
@@ -792,8 +1170,8 @@
     if(spends)  parts.push(fmt(spends) + " spend" + (spends === 1 ? "" : "s") + " skipped");
     if(skipped) parts.push(fmt(skipped) + " row" + (skipped === 1 ? "" : "s") + " skipped");
 
-    state.lastImport = todayISO() + " · " + fmt(added) + " added";
-    save(); render();
+    state.lastImport = todayISO() + " · " + fmt(added) + " added" + (tag ? " to " + tag : "");
+    save(); renderTabs(); renderGameChips(); render();
     if(added) popCoins($("robloxBtn"));
     toast(parts.join(" · "));
   }
@@ -873,10 +1251,14 @@
           rate: num(data.rate, DEFAULTS.rate),
           tax: (typeof data.tax === "number" && data.tax >= 0 && data.tax < 100) ? data.tax : DEFAULTS.tax,
           lastSource: data.lastSource || NAMES[0],
-          lastImport: data.lastImport || ""
+          lastImport: data.lastImport || "",
+          games: (Array.isArray(data.games) && data.games.length) ? data.games : DEFAULT_GAMES.slice(),
+          lastGame: typeof data.lastGame === "string" ? data.lastGame : DEFAULT_GAMES[0],
+          celebrated: (typeof data.celebrated === "number") ? data.celebrated : null
         };
         picked = state.lastSource;
-        save(); fillSettings(); renderChips(); render();
+        pickedGame = state.lastGame;
+        save(); fillSettings(); renderChips(); renderGameChips(); renderTabs(); render();
         toast("Backup restored");
       }catch(err){ toast("That file isn't a valid backup"); }
     };
@@ -887,6 +1269,8 @@
   $("date").value = todayISO();
   fillSettings();
   renderChips();
+  renderGameChips();
+  renderTabs();
   render();
 
   if(location.protocol !== "file:" && "serviceWorker" in navigator){
