@@ -5,8 +5,13 @@ it's worth in USD. It runs entirely in your phone's browser — no account, no
 server, no internet needed after the first load. Everything you log is stored on
 the device itself.
 
+Styled like a Roblox game UI: bevelled purple panels on a starfield, chunky
+buttons, and your own avatar in the player card.
+
 ## What it does
 
+- **Player card** — your avatar, a level that climbs with the Robux goal
+  (level 50 lands exactly on it) and a rank that changes as you go
 - **Two goal rings** — Robux earned against a 1.5B goal, and take-home USD
   against a $3,500,000 goal
 - **Tax built in** — converts Robux to USD at the DevEx rate, takes 35% off the
